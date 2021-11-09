@@ -1,0 +1,15 @@
+.todoList {
+    max-height: 550px;
+    overflow-y: scroll;
+}
+
+
+.todoList::-webkit-scrollbar {
+    display: none;
+}
+  
+.todoList {
+    -ms-overflow-style: auto;
+    scrollbar-color: grey transparent;
+    
+}
