@@ -1,4 +1,3 @@
-import styles from '../styles/Home.module.css'
 import Todo from '../components/Todo/Todo';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
