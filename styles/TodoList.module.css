@@ -1,8 +1,18 @@
 .todoList {
     max-height: 550px;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
+.todoListItem {
+    transform: translateX(-100%);
+    animation: slideIn .5s ease-out forwards;
+}
+
+
+.trashIcon:active {
+    animation: shake .3s;
+}
 
 .todoList::-webkit-scrollbar {
     display: none;
@@ -12,4 +22,23 @@
     -ms-overflow-style: auto;
     scrollbar-color: grey transparent;
     
+}
+
+
+@keyframes slideIn {
+    80% {
+        transform: translateX(20%);
+    }
+    100% {
+        transform: translateX(0%)
+    }
+}
+
+@keyframes shake {
+    20%,60%,100% {
+        transform: rotate(7deg);
+    }
+    0%,40%,80% {
+        transform: rotate(-7deg);
+    }
 }

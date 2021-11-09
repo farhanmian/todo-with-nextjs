@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
     todos: [],
+    isLoading: true
 };
 
 const todoSlice = createSlice({
@@ -9,7 +10,7 @@ const todoSlice = createSlice({
     initialState,
     reducers: {
         addTodo(state, action) {
-            const newTodo = { id: action.payload.id, todo: action.payload.todo, isComplete: false };
+            const newTodo = { id: Math.random() * 10, todo: action.payload, isComplete: false };
             state.todos.push(newTodo);
         },
         removeTodo(state, action) {
@@ -30,6 +31,9 @@ const todoSlice = createSlice({
         },
         replaceTodos(state, action) {
             state.todos = action.payload;
+        },
+        isLoading (state, action) {
+            state.isLoading = action.payload
         }
     }
 });
@@ -37,43 +41,33 @@ const todoSlice = createSlice({
 export default todoSlice;
 
 
-export const sendTodoData = (todo: { id: number, todo: string, isComplete: boolean }) => {
+export const sendTodoData = (todos: {}[]) => {
     return async () => {
-        localStorage.setItem(`${todo.id}`, JSON.stringify({ todo: todo.todo, id: todo.id, isComplete: todo.isComplete }));
+        fetch('https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/todos.json', {
+            method: 'PUT',
+            body: JSON.stringify(todos ? todos : []),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
     }
 };
 
-export const fetchTodoData = (dispatchAction: (parameter: object) => void) => {
+export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoading: (parameter: boolean) => void) => {
     return async (dispatch: any) => {
         const fetchData = async () => {
-            let values = [],
-                keys = Object.keys(localStorage),
-                i = keys.length;
-
-                for(let a = 0; a < keys.length-1; a++ ) {
-                    if(parseInt(keys[a])) {
-                        console.log(a+1);
-                        localStorage.getItem(`${a+1}`) && values.push(localStorage.getItem(`${a+1}`));
-                    }
-                }
-
-            // for(let a = keys.length; a > 0; a--) {
-            //     if(parseInt(keys[a])) {
-            //         // console.log(localStorage.getItem(`${a}`))
-            //         // values.push(localStorage.getItem(keys[a]));
-            //         values.push(localStorage.getItem(`${3}`));
-            //     }
-            // }
-
-            const updatedValues = values.map(value => {
-                return JSON.parse(value);
-            });
-            return updatedValues;
+            dispatch(isLoading(true));
+            const res = await fetch('https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/todos.json');
+            if(res.ok) {
+                const data = await res.json();
+                data ? dispatch(replaceTodos(data)) : dispatch(replaceTodos([]));
+                dispatch(isLoading(false));
+            } else if(!res.ok) {
+                dispatch(isLoading(false));
+            }
 
         }
 
-        const fetchedTodos = await fetchData();
-        dispatch(dispatchAction(fetchedTodos))
-        console.log(fetchedTodos);
+        fetchData();
     }
 }

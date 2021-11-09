@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from '../../styles/TodoList.module.css';
-import { List, ListItem, ListItemIcon, ListItemText, makeStyles, SvgIcon } from '@material-ui/core'
+import { List, ListItem, ListItemIcon, ListItemText, makeStyles, SvgIcon, Typography } from '@material-ui/core'
 import { CheckCircleOutlineOutlined, CancelOutlined } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
-// import { todoActions } from '../../store/actions/todoActions';
-import Trash from '../../static/icons/Trash';
+import Trash from '../../assets/icons/Trash';
+import Loading from '../Loading/Loading';
 
 
 const useStyles = makeStyles({
@@ -16,7 +16,7 @@ const useStyles = makeStyles({
     listItem: {
         padding: 10,
         backgroundColor: '#1E0057',
-        marginBlock: 10,
+        marginBottom: 30,
         borderRadius: 15,
         transition: 'all .2s'
     },
@@ -37,39 +37,53 @@ const useStyles = makeStyles({
     },
     trash: {
         width: 20,
-        marginLeft: 'auto'
+        marginLeft: 'auto',
+        '&:active': {
+            '& > *': {
+                color: '#ff0505',
+                filter: 'drop-shadow(7px 10px 25px red)'
+            }
+        }
+    },
+    addTodoHeading: {
+        color: '#fff',
+        marginTop: 50,
+        fontFamily: 'Fruktur, cursive',
+        overflow: 'hidden'
     }
 });
 
-const TodoList: React.FC<{todoCompleteHandler: (id: number)=> void, removeTodoHandler: (id: number)=> void}> = (props) => {
+const TodoList: React.FC<{ todoCompleteHandler: (id: number) => void, removeTodoHandler: (id: number) => void }> = (props) => {
     const classes = useStyles();
     const todos = useSelector((state: { todos: [] }) => state.todos);
+    const isLoading = useSelector((state: { isLoading: boolean }) => state.isLoading);
 
 
     return (
         <List className={`${classes.list} ${styles.todoList}`}>
 
             {
-                todos &&
-                todos.map((todo: { id: number, todo: string, isComplete: boolean }, i) => (
-                    <ListItem style={{ backgroundColor: todo.isComplete ? '#2F2F2F' : '' }} id={`${todo.id}`} className={classes.listItem} key={todo.id}>
-                        <ListItemText style={{ textDecoration: todo.isComplete ? 'line-through 2px' : '' }} className={classes.listItemText}>
+                !isLoading ?
+                    todos.length !== 0 ? todos.map((todo: { id: number, todo: string, isComplete: boolean }) => (
+                        <ListItem style={{ backgroundColor: todo.isComplete ? '#2F2F2F' : '' }} id={`${todo.id}`} className={`${classes.listItem} ${styles.todoListItem}`} key={todo.id}>
+                            <ListItemText style={{ textDecoration: todo.isComplete ? 'line-through 2px' : '' }} className={classes.listItemText}>
 
-                            <ListItemIcon>
-                                {!todo.isComplete && <CheckCircleOutlineOutlined onClick={() => { props.todoCompleteHandler(todo.id) }} className={classes.tick} />}
-                                {todo.isComplete && <CancelOutlined className={classes.cancel} onClick={() => { props.todoCompleteHandler(todo.id) }} />}
-                            </ListItemIcon>
+                                <ListItemIcon>
+                                    {!todo.isComplete && <CheckCircleOutlineOutlined onClick={() => { props.todoCompleteHandler(todo.id) }} className={classes.tick} />}
+                                    {todo.isComplete && <CancelOutlined className={classes.cancel} onClick={() => { props.todoCompleteHandler(todo.id) }} />}
+                                </ListItemIcon>
 
-                            {todo.todo}
+                                {todo.todo}
 
-                            <ListItemIcon onClick={() => { props.removeTodoHandler(todo.id) }} style={{marginLeft: 'auto', minWidth: 'max-content'}}>
-                                <SvgIcon className={classes.trash}>
-                                    <Trash color="#fff" />
-                                </SvgIcon>
-                            </ListItemIcon>
-                        </ListItemText>
-                    </ListItem>
-                ))
+                                <ListItemIcon onClick={() => { props.removeTodoHandler(todo.id) }} style={{ marginLeft: 'auto', minWidth: 'max-content' }}>
+                                    <SvgIcon className={`${classes.trash} ${styles.trashIcon}`}>
+                                        <Trash color="#fff" />
+                                    </SvgIcon>
+                                </ListItemIcon>
+                            </ListItemText>
+                        </ListItem>
+                    )) : <Typography className={classes.addTodoHeading} variant="h4">No Todo Found! <br /> Add Todos</Typography>
+                    : <Loading />
             }
         </List>
     )

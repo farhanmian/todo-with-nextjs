@@ -3,22 +3,18 @@ import { Typography, Button, makeStyles, TextField } from '@material-ui/core';
 import styles from '../../styles/Todo.module.css';
 import TodoList from '../TodoList/TodoList';
 import { todoActions } from '../../store/actions/todoActions';
-import { useDispatch, useSelector } from 'react-redux';
-import { sendTodoData } from '../../store/reducers/todoReducer';
-import { AddOutlined } from '@material-ui/icons';
+import { useDispatch } from 'react-redux';
 
 
 const useStyles = makeStyles({
     btn: {
-        height: 60,
-        borderRadius: 100,
-        backgroundColor: "#FF00FF",
-        position: 'absolute',
-        bottom: '5%',
-        right: '5%',
-        '&:hover': {
-            backgroundColor: '#FF00FF',
-        }
+        backgroundColor: '#f7f5f5',
+        color: '#000',
+        padding: 5,
+        marginLeft: 15,
+        borderRadius: 5,
+        textTransform: 'capitalize',
+        
     },
     textField: {
         width: 250,
@@ -36,7 +32,6 @@ const useStyles = makeStyles({
 
 
 export default function Todo() {
-    const todos = useSelector((state: {todos: [{id: number, todo: string, isComplete: boolean}]}) => state.todos) 
     const dispatch = useDispatch();
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -46,9 +41,8 @@ export default function Todo() {
         if (inputRef.current.value.trim().length === 0) {
             return;
         }
-        const id = todos.length+1;
-        dispatch(todoActions.addTodo({ id, todo: inputRef.current.value }));
-        dispatch(sendTodoData({ id, todo: inputRef.current.value, isComplete: false }));
+        
+        dispatch(todoActions.addTodo(inputRef.current.value ));
         inputRef.current.value = '';
     }
 
@@ -57,7 +51,6 @@ export default function Todo() {
     }
     const removeTodoHandler = (id: number) => {
         dispatch(todoActions.removeTodo(id))
-        localStorage.removeItem(`${id}`);
     }
 
     const classes = useStyles();
@@ -69,13 +62,10 @@ export default function Todo() {
 
             <form className={styles.form} onSubmit={addTodoHandler}>
                 <input ref={inputRef} className={classes.textField} placeholder="add todo" />
+                <Button variant="contained" className={classes.btn} disableElevation >Add Todo</Button>
             </form>
 
             <TodoList todoCompleteHandler={todoCompleteHandler} removeTodoHandler={removeTodoHandler} />
-
-            {/* <Button className={classes.btn} variant="contained" disableElevation>
-                <AddOutlined className={classes.icon} />
-            </Button> */}
 
         </div>
     )
