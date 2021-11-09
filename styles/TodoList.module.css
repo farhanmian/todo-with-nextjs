@@ -6,7 +6,7 @@
 
 .todoListItem {
     transform: translateX(-100%);
-    animation: slideIn .5s ease-out forwards;
+    animation: slideIn .4s ease-out forwards;
 }
 
 

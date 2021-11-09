@@ -4,9 +4,13 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-color: #9FA3FF;
+}
+body {
+  background-image: linear-gradient(to right bottom, rgba(100, 60, 60, 0.4), rgba(0,0,0,.3)), url(../assets/img/bg.png);
+  background-size: cover;
+  background-repeat: no-repeat;
   min-height: 100vh;
-
+  overflow: hidden
 }
 
 a {

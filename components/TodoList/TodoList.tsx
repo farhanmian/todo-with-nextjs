@@ -14,14 +14,14 @@ const useStyles = makeStyles({
         paddingRight: 5
     },
     listItem: {
+        backgroundColor: '#fffffff0',
         padding: 10,
-        backgroundColor: '#1E0057',
         marginBottom: 30,
         borderRadius: 15,
         transition: 'all .2s'
     },
     listItemText: {
-        color: '#fff',
+        color: '#000',
         '& span': {
             fontSize: 20,
             textTransform: 'capitalize',
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
         }
     },
     tick: {
-        color: '#FFF'
+        color: '#000'
     },
     cancel: {
         color: '#f10'
@@ -40,16 +40,16 @@ const useStyles = makeStyles({
         marginLeft: 'auto',
         '&:active': {
             '& > *': {
-                color: '#ff0505',
-                filter: 'drop-shadow(7px 10px 25px red)'
+                filter: 'drop-shadow(7px 10px 25px #000)'
             }
         }
     },
     addTodoHeading: {
         color: '#fff',
         marginTop: 50,
-        fontFamily: 'Fruktur, cursive',
-        overflow: 'hidden'
+        fontFamily: ' cursive',
+        overflow: 'hidden',
+        textDecoration: 'underline'
     }
 });
 
@@ -77,7 +77,7 @@ const TodoList: React.FC<{ todoCompleteHandler: (id: number) => void, removeTodo
 
                                 <ListItemIcon onClick={() => { props.removeTodoHandler(todo.id) }} style={{ marginLeft: 'auto', minWidth: 'max-content' }}>
                                     <SvgIcon className={`${classes.trash} ${styles.trashIcon}`}>
-                                        <Trash color="#fff" />
+                                        <Trash color={!todo.isComplete ? '#000' : '#f10'} />
                                     </SvgIcon>
                                 </ListItemIcon>
                             </ListItemText>

@@ -1,3 +1,27 @@
-.container {
+.todo {
+  max-width: 450px;
+  height: 800px;
+  border-radius: 50px;
+  background-color: #0b0b0bad;
+  padding: 50px 30px;
+  margin: auto;
+  margin-top: 50px;
   text-align: center;
+  position: relative;
+  box-sizing: border-box;
+  border: 2px solid #d0cdcd;
+  box-shadow: 20px 17px 10px rgba(0,0,0,.8);
+  transition: all .2s;
 }
+
+.heading {
+  text-decoration: underline;
+}
+.heading span {
+  font-family: 'Zen Kurenaido', sans-serif;
+}
+
+.form {
+  margin-top: 30px
+}
+
