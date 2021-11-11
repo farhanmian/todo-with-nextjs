@@ -4,7 +4,7 @@ import { List, ListItem, ListItemIcon, ListItemText, makeStyles, SvgIcon, Typogr
 import { CheckCircleOutlineOutlined, CancelOutlined } from '@material-ui/icons';
 import { useSelector } from 'react-redux';
 import Trash from '../../assets/icons/Trash';
-import Loading from '../Loading/Loading';
+import Loading from '../loading/loading';
 
 
 const useStyles = makeStyles({
@@ -18,6 +18,7 @@ const useStyles = makeStyles({
         padding: 10,
         marginBottom: 30,
         borderRadius: 15,
+        border: '1px solid #fff',
         transition: 'all .2s'
     },
     listItemText: {
@@ -33,7 +34,8 @@ const useStyles = makeStyles({
         color: '#000'
     },
     cancel: {
-        color: '#f10'
+        // color: '#f10'
+        color: '#4f0'
     },
     trash: {
         width: 20,
@@ -65,8 +67,8 @@ const TodoList: React.FC<{ todoCompleteHandler: (id: number) => void, removeTodo
             {
                 !isLoading ?
                     todos.length !== 0 ? todos.map((todo: { id: number, todo: string, isComplete: boolean }) => (
-                        <ListItem style={{ backgroundColor: todo.isComplete ? '#2F2F2F' : '' }} id={`${todo.id}`} className={`${classes.listItem} ${styles.todoListItem}`} key={todo.id}>
-                            <ListItemText style={{ textDecoration: todo.isComplete ? 'line-through 2px' : '' }} className={classes.listItemText}>
+                        <ListItem style={{ backgroundColor: todo.isComplete ? '#2F2F2F' : '', borderColor:  todo.isComplete ? '#4f0' : '#fff' }} id={`${todo.id}`} className={`${classes.listItem} ${styles.todoListItem}`} key={todo.id}>
+                            <ListItemText style={{ textDecoration: todo.isComplete ? 'line-through 2px' : '' , color: todo.isComplete ? '#4f0' : '#000'}} className={classes.listItemText}>
 
                                 <ListItemIcon>
                                     {!todo.isComplete && <CheckCircleOutlineOutlined onClick={() => { props.todoCompleteHandler(todo.id) }} className={classes.tick} />}
@@ -77,7 +79,7 @@ const TodoList: React.FC<{ todoCompleteHandler: (id: number) => void, removeTodo
 
                                 <ListItemIcon onClick={() => { props.removeTodoHandler(todo.id) }} style={{ marginLeft: 'auto', minWidth: 'max-content' }}>
                                     <SvgIcon className={`${classes.trash} ${styles.trashIcon}`}>
-                                        <Trash color={!todo.isComplete ? '#000' : '#f10'} />
+                                        <Trash color={!todo.isComplete ? '#000' : '#4f0'} />
                                     </SvgIcon>
                                 </ListItemIcon>
                             </ListItemText>

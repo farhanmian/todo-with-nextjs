@@ -1,6 +1,6 @@
 import styles from '../styles/Home.module.css';
 import React, { useRef, useEffect } from 'react';
-import TodoList from '../components/TodoList/TodoList';
+import TodoList from '../components/todoList/todoList';
 import { useDispatch, useSelector } from 'react-redux';
 import { todoActions } from '../store/actions/todoActions';
 import { sendTodoData } from '../store/reducers/todoReducer';
