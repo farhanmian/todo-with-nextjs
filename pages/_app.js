@@ -3,7 +3,7 @@ import { Provider } from 'react-redux'
 import store from '../store/store.ts';
 import { createWrapper } from 'next-redux-wrapper';
 import { ThemeProvider } from '@material-ui/core';
-import theme from "./theme";
+import theme from "../components/theme";
 
 function MyApp({ Component, pageProps }) {
   return (
