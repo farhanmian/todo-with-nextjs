@@ -27,6 +27,8 @@ const todoSlice = createSlice({
                     return todo
                 }
             });
+            
+            
             state.todos = updatedTodos;
         },
         replaceTodos(state, action) {

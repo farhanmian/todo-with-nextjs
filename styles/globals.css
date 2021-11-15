@@ -6,11 +6,10 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 body {
-  background-image: linear-gradient(to right bottom, rgba(100, 60, 60, 0.4), rgba(0,0,0,.3)), url(../assets/img/bg.png);
-  background-size: cover;
-  background-repeat: no-repeat;
+  /* background-color: #9FA3FF; */
+  background-image: linear-gradient(to top right,#CD69DA, #FDA3A4);
   min-height: 100vh;
-  overflow: hidden
+  /* overflow: hidden */
 }
 
 a {
@@ -20,4 +19,70 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+
+.app {
+  max-width: 80vw;
+  height: 800px;
+  border-radius: 5px;
+  background-color: #181820;
+  /* padding: 50px 30px; */
+  margin: auto;
+  margin-top: 50px;
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav {
+  min-height: 10%;
+  max-height: 10%;
+  width: 100%;
+  background-color: #21212B;
+  box-shadow: 0 2px 3px rgba(0,0,0,.4);
+  text-align: start;
+  display: flex;
+  align-items: center;
+}
+
+.navMenuIcon {
+  cursor: pointer;
+  transition: all .3s;
+  backface-visibility: hidden;
+}
+.navMenuIcon:hover {
+  transform: scale(1.02);
+}
+.navMenuIcon:active {
+  transform: scale(.95);
+}
+
+
+.drawer {
+  width: 0;
+  height: 90%;
+  background-color: #21212B;
+  position: absolute;
+  top: 5rem;
+  box-shadow: 0 2px 3px rgba(0,0,0,.4);
+  transition: all .3s ease-in;
+  overflow: hidden;
+}
+
+.drawerActive {
+  width: 300px;
+  padding-left: .5rem;
+}
+
+.drawerInnerContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerInnerContainer > * {
+  height: 48px;
 }

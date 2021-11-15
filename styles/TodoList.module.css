@@ -1,14 +1,12 @@
-.todoList {
-    max-height: 550px;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
 
 .todoListItem {
     transform: translateX(-100%);
     animation: slideIn .4s ease-out forwards;
 }
 
+.todoCircleIcon:hover {
+    animation: bubbleUp .9s linear infinite;
+}
 
 .trashIcon:active {
     animation: shake .3s;
@@ -42,3 +40,11 @@
         transform: rotate(-7deg);
     }
 }
+
+
+@keyframes bubbleUp {
+    50% {
+        transform: scale(.86);
+    }
+}
+

@@ -1,18 +1,16 @@
 import styles from '../styles/Home.module.css';
-import React, { useRef, useEffect } from 'react';
-import TodoList from '../components/todoList/todoList';
+import React, { useRef, useEffect, useState } from 'react';
+import TodoList from '../Components/TodoList/TodoList';
 import { useDispatch, useSelector } from 'react-redux';
 import { todoActions } from '../store/actions/todoActions';
 import { sendTodoData } from '../store/reducers/todoReducer';
 import { fetchTodoData } from '../store/reducers/todoReducer';
-import { makeStyles, Typography, Button } from '@material-ui/core';
+import { makeStyles, Typography, TextField, List, Button } from '@material-ui/core';
+import { CSSTransition } from 'react-transition-group';
+import Loading from '../Components/Partials/Loading/Loading';
 
 
-let isInitial = true;
 const useStyles = makeStyles({
-  heading: {
-    color: '#fff'
-  },
   btn: {
     backgroundColor: '#f2f2f2',
     color: '#000',
@@ -23,34 +21,69 @@ const useStyles = makeStyles({
 
   },
   textField: {
-    width: 250,
-    padding: '10px 5px',
-    borderRadius: 10,
-    border: '1px solid #fff',
-    textTransform: 'capitalize',
-    backgroundColor: 'transparent',
-    color: '#fff',
-    '&:focus': {
-      outline: 'none'
-    }
+    '& input': {
+      color: '#fff',
+      textTransform: 'capitalize',
+      transition: 'all .2s',
+      '&:focus': {
+        backgroundColor: 'rgba(255,255,255,.1)'
+      },
+      '&::placeholder': {
+        textOverflow: 'ellipsis !important',
+        color: 'blue'
+      }
+    },
   },
+  inputLabel: {
+    color: '#ccc'
+  },
+
   icon: {
     width: '100%',
     color: '#fff',
-  }
+  },
+  addBtn: {
+    minWidth: 55,
+    maxWidth: 55,
+    maxHeight: 55,
+    borderRadius: 15,
+    padding: 5,
+    fontSize: 30,
+    position: 'absolute',
+    bottom: '1%',
+    lfet: '50%',
+    transform: 'translate(-50%)',
+  },
+  list: {
+    marginTop: 50,
+    padding: 0,
+    paddingRight: 5
+  },
+  addTodoHeading: {
+    color: '#fff',
+    marginTop: 50,
+    fontFamily: ' cursive',
+    overflow: 'hidden',
+    textDecoration: 'underline'
+  },
+
 });
 
 
+let isInitial = true;
 const Home = () => {
   const classes = useStyles();
+  const [showForm, setShowForm] = useState(false);
 
   const dispatch = useDispatch();
-  const todos = useSelector((state: { todos: [] }) => state.todos);
+  const isLoading = useSelector((state: { isLoading: boolean }) => state.isLoading);
   const inputRef = useRef<HTMLInputElement>(null);
+  const todos = useSelector((state: { todos: [] }) => state.todos);
 
   useEffect(() => {
-    dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading))
+    todos.length === 0 && dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading))
   }, []);
+
   useEffect(() => {
     if (isInitial) {
       isInitial = false;
@@ -61,8 +94,10 @@ const Home = () => {
 
 
 
+
   const addTodoHandler = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (inputRef.current.value.trim().length === 0) {
       return;
     }
@@ -71,27 +106,47 @@ const Home = () => {
     inputRef.current.value = '';
   }
 
-  const todoCompleteHandler = (id: number) => {
-    dispatch(todoActions.isCompleteTodo(id));
-  }
-  const removeTodoHandler = (id: number) => {
-    dispatch(todoActions.removeTodo(id))
+
+  const formVisibilityHandler = () => {
+    setShowForm((showForm) => !showForm)
   }
 
   return (
-    <div className={styles.todo}>
-      <Typography className={`${styles.heading} ${classes.heading}`} variant="h4" color="textPrimary">
+    <React.Fragment>
+      <Typography className={styles.heading} variant="h4" color="primary">
         Todo<span>List</span>
       </Typography>
 
-      <form className={styles.form} onSubmit={addTodoHandler}>
-        <input ref={inputRef} className={classes.textField} placeholder="add todo" />
-        <Button variant="contained" className={classes.btn} disableElevation >Add Todo</Button>
-      </form>
+      <Button onClick={formVisibilityHandler} className={`${classes.addBtn} ${styles.addBtn}`} variant="contained">
+        +
+      </Button>
 
-      <TodoList todoCompleteHandler={todoCompleteHandler} removeTodoHandler={removeTodoHandler} />
+      {showForm &&
+        <form className={styles.form} onSubmit={addTodoHandler}>
+          <div className={styles.formInnerContainer}>
+            <div className={styles.formOvlay} />
+            <TextField InputLabelProps={{ className: classes.inputLabel }} inputRef={inputRef} className={classes.textField} size="small" label="Write Todo" variant="filled" color="primary" />
+            <Button type="submit" variant="contained" className={classes.btn} disableElevation >Add Todo</Button>
+          </div>
+        </form>
+      }
 
-    </div>
+      <List className={`${classes.list} ${styles.todoList}`}>
+        {
+          !isLoading ?
+            todos.length !== 0 ? todos.map((todo: { id: number, todo: string, isComplete: boolean }) => {
+              return (
+                <CSSTransition in={!todo.isComplete} timeout={1300} mountOnEnter unmountOnExit classNames={styles.completedTodo}>
+                  <TodoList  listItemStyle={{ position: `${todo.isComplete ? 'absolute' : 'relative'}` }} todo={todo} listItemClass={`${todo.isComplete ? styles.completedTodo : ''}`} />
+                </CSSTransition>
+              )
+            }) : <Typography className={classes.addTodoHeading} variant="h4">No Todo Found! <br /> Add Todos</Typography>
+            : <Loading />
+        }
+      </List>
+
+    </React.Fragment>
+
   )
 }
 

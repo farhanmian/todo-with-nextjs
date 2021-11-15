@@ -1,0 +1,8 @@
+.todoContainer {
+  width: 70%;
+  height: 90%;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}

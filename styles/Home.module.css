@@ -1,18 +1,3 @@
-.todo {
-  max-width: 450px;
-  height: 800px;
-  border-radius: 50px;
-  background-color: #0b0b0bad;
-  padding: 50px 30px;
-  margin: auto;
-  margin-top: 50px;
-  text-align: center;
-  position: relative;
-  box-sizing: border-box;
-  border: 2px solid #d0cdcd;
-  box-shadow: 20px 17px 10px rgba(0,0,0,.8);
-  transition: all .2s;
-}
 
 .heading {
   text-decoration: underline;
@@ -22,6 +7,84 @@
 }
 
 .form {
-  margin-top: 30px
+  width: 500px;
+  height: 300px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 5rem 1rem;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 2s;
+  animation: popup .6s linear forwards;
+  z-index: 999;
+}
+.formInnerContainer {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
+/* .formOvlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  
+} */
+
+.addBtn {
+  background-image: linear-gradient(to top right, #C546D4, #FE9089);
+}
+.addBtn span {
+  color: #fff
+}
+
+
+@keyframes popup {
+  0% {
+    clip-path: polygon(50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%);
+  }
+  50% {
+    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 75%, 0 75%);
+  }
+  100% {
+    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 0, 0 0);
+  }
+}
+
+
+
+.completedTodo {
+  transform: translateX(0);
+  transition: all 1s;
+  animation: fallDown 1.3s infinite;
+  z-index: 9;
+  position: absolute;
+}
+
+@keyframes fallDown {
+  0% {
+      box-shadow: 0 5px 10px rgba(0,0,0,.7);
+  }
+
+  100% {
+      transform: rotate(-0deg) rotateZ(-7deg) translateY(50rem);
+      box-shadow: 0 15px 20px rgba(0,0,0,1);
+      opacity: .1;
+  }
+}
+
+.todoList {
+  max-height: 550px;
+  min-height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+  transition: all 1s;
+}
