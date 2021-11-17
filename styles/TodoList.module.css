@@ -12,14 +12,18 @@
     animation: shake .3s;
 }
 
+.todoRestoreIcon:hover {
+    animation: rotate 1s ease-in infinite;
+}
+
+
 .todoList::-webkit-scrollbar {
     display: none;
 }
   
 .todoList {
     -ms-overflow-style: auto;
-    scrollbar-color: grey transparent;
-    
+    scrollbar-color: grey transparent;   
 }
 
 
@@ -48,3 +52,8 @@
     }
 }
 
+@keyframes rotate {
+    50% {
+        transform: rotate(-30deg);
+    }
+}

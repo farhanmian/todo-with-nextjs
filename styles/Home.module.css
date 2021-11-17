@@ -1,10 +1,10 @@
 
-.heading {
+/* .heading {
   text-decoration: underline;
 }
 .heading span {
   font-family: 'Zen Kurenaido', sans-serif;
-}
+} */
 
 .form {
   width: 500px;
@@ -24,6 +24,11 @@
   animation: popup .6s linear forwards;
   z-index: 999;
 }
+.formClose {
+  animation: popDown .4s linear forwards;
+}
+
+
 .formInnerContainer {
   width: 80%;
   display: flex;
@@ -31,12 +36,6 @@
   align-items: center;
 }
 
-/* .formOvlay {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  
-} */
 
 .addBtn {
   background-image: linear-gradient(to top right, #C546D4, #FE9089);
@@ -46,27 +45,51 @@
 }
 
 
-@keyframes popup {
-  0% {
-    clip-path: polygon(50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%);
-  }
-  50% {
-    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 75%, 0 75%);
-  }
-  100% {
-    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 0, 0 0);
-  }
-}
-
-
-
 .completedTodo {
-  transform: translateX(0);
-  transition: all 1s;
-  animation: fallDown 1.3s infinite;
+  animation: fallDown 1.3s forwards !important;
   z-index: 9;
   position: absolute;
 }
+
+.todoList {
+  max-height: 550px;
+  min-height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+  transition: all 1s;
+}
+
+
+@keyframes popup {
+  0% {
+    clip-path: polygon(50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%);
+    opacity: 0;
+  }
+  50% {
+    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 75%, 0 75%);
+    opacity: .5;
+  }
+  100% {
+    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 0, 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes popDown {
+  0% {
+    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 0, 0 0);
+  }
+  50% {
+    clip-path: polygon(0 75%, 48% 75%, 45% 100%, 55% 100%, 52% 75%, 100% 75%, 100% 75%, 0 75%);
+    opacity: .3;
+  }
+  100% {
+    clip-path: polygon(50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%);
+    opacity: 0;
+  }
+}
+
 
 @keyframes fallDown {
   0% {
@@ -78,13 +101,4 @@
       box-shadow: 0 15px 20px rgba(0,0,0,1);
       opacity: .1;
   }
-}
-
-.todoList {
-  max-height: 550px;
-  min-height: 500px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  position: relative;
-  transition: all 1s;
 }

@@ -1,10 +1,11 @@
 import React from 'react';
 import styles from '../../styles/TodoList.module.css';
 import { ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core'
-import { CircleOutlined, CheckCircle, DeleteOutlineOutlined } from '@mui/icons-material';
+import { CircleOutlined, CheckCircle, DeleteOutlineOutlined, SettingsBackupRestoreRounded } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { todoActions } from '../../store/actions/todoActions';
-
+import { deleteTodo } from '../../store/reducers/todoReducer';
+import { updateTodoData } from '../../store/reducers/todoReducer';
 
 
 const useStyles = makeStyles({
@@ -41,7 +42,7 @@ const useStyles = makeStyles({
             transform: 'scale(.9)'
         }
     },
-    tickIcon: {
+    restoreIcon: {
         color: '#FC76A1',
         transition: 'all .3s',
         '&:active': {
@@ -71,20 +72,22 @@ const TodoList: React.FC<{ todo: { todo: string, isComplete: boolean, id: number
     const todos = useSelector((state: { todos: [] }) => state.todos);
     const isLoading = useSelector((state: { isLoading: boolean }) => state.isLoading);
 
-    const todoCompleteHandler = (id: number) => {
-        dispatch(todoActions.isCompleteTodo(id));
+    const todoCompleteHandler = (todo: {isComplete: boolean, todo: string, id: number}) => {
+        dispatch(todoActions.isCompleteTodo(todo.id));
+        dispatch(updateTodoData(todo));
     }
     const removeTodoHandler = (id: number) => {
-        dispatch(todoActions.removeTodo(id))
+        dispatch(todoActions.removeTodo(id));
+        dispatch(deleteTodo(id))
     }
 
     return (
         <ListItem style={props.listItemStyle} id={`${props.todo.id}`} className={`${classes.listItem} ${styles.todoListItem} ${props.listItemClass}`} >
             <ListItemText style={{ textDecoration: props.todo.isComplete ? 'line-through 2px' : '', }} className={classes.listItemText}>
 
-                <ListItemIcon onClick={() => { todoCompleteHandler(props.todo.id) }}>
+                <ListItemIcon onClick={() => { todoCompleteHandler(props.todo) }}>
                     {!props.todo.isComplete && <CircleOutlined fontSize="large" className={`${classes.circleIcon} ${styles.todoCircleIcon}`} />}
-                    {props.todo.isComplete && <CheckCircle fontSize="large" className={classes.tickIcon} />}
+                    {props.todo.isComplete && <SettingsBackupRestoreRounded fontSize="large" className={`${classes.restoreIcon} ${styles.todoRestoreIcon}`} />}
                 </ListItemIcon>
 
                 {props.todo.todo}

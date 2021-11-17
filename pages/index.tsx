@@ -66,6 +66,10 @@ const useStyles = makeStyles({
     overflow: 'hidden',
     textDecoration: 'underline'
   },
+  completedTodo: {
+    transform: 'translateX(0)',
+    transition: 'all 1s',
+  }
 
 });
 
@@ -84,16 +88,6 @@ const Home = () => {
     todos.length === 0 && dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading))
   }, []);
 
-  useEffect(() => {
-    if (isInitial) {
-      isInitial = false;
-      return;
-    }
-    dispatch(sendTodoData(todos));
-  }, [todos])
-
-
-
 
   const addTodoHandler = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,7 +96,13 @@ const Home = () => {
       return;
     }
 
-    dispatch(todoActions.addTodo(inputRef.current.value));
+    const todo = {
+      todo: inputRef.current.value,
+      id: Math.ceil(Math.random() * 1000),
+      isComplete: false,
+    }
+    dispatch(todoActions.addTodo(todo));
+    dispatch(sendTodoData(todo));
     inputRef.current.value = '';
   }
 
@@ -113,9 +113,10 @@ const Home = () => {
 
   return (
     <React.Fragment>
-      <Typography className={styles.heading} variant="h4" color="primary">
+      
+      {/* <Typography className={styles.heading} variant="h4" color="primary">
         Todo<span>List</span>
-      </Typography>
+      </Typography> */}
 
       <Button onClick={formVisibilityHandler} className={`${classes.addBtn} ${styles.addBtn}`} variant="contained">
         +
@@ -136,8 +137,8 @@ const Home = () => {
           !isLoading ?
             todos.length !== 0 ? todos.map((todo: { id: number, todo: string, isComplete: boolean }) => {
               return (
-                <CSSTransition in={!todo.isComplete} timeout={1300} mountOnEnter unmountOnExit classNames={styles.completedTodo}>
-                  <TodoList  listItemStyle={{ position: `${todo.isComplete ? 'absolute' : 'relative'}` }} todo={todo} listItemClass={`${todo.isComplete ? styles.completedTodo : ''}`} />
+                <CSSTransition key={todo.id} in={!todo.isComplete} mountOnEnter unmountOnExit timeout={1300} classNames={styles.completedTodo}>
+                  <TodoList listItemStyle={{ position: `${todo.isComplete ? 'absolute' : 'relative'}` }} todo={todo} listItemClass={`${todo.isComplete ? `${styles.completedTodo} ${classes.completedTodo}` : ''}`} />
                 </CSSTransition>
               )
             }) : <Typography className={classes.addTodoHeading} variant="h4">No Todo Found! <br /> Add Todos</Typography>
