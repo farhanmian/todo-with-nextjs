@@ -45,8 +45,7 @@
   width: 0;
   height: 90%;
   background-color: #21212B;
-  position: absolute;
-  top: 5rem;
+  position: relative;
   box-shadow: 0 2px 3px rgba(0,0,0,.4);
   transition: all .3s ease-in;
   overflow: hidden;
@@ -65,4 +64,21 @@
 
 .drawerInnerContainer > * {
   height: 48px;
+}
+
+.addCategoryBtn {
+  position: absolute;
+  bottom: 2%;
+  right: 2%;
+}
+
+.categoryFormContainer {
+  height: 48px;
+  width: 100%;
+}
+.categoryForm {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

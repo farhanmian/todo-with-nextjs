@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../../styles/TodoList.module.css';
 import { ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core'
-import { CircleOutlined, CheckCircle, DeleteOutlineOutlined, SettingsBackupRestoreRounded } from '@mui/icons-material';
+import { CircleOutlined, CheckCircle, DeleteOutlineOutlined, SettingsBackupRestoreRounded, Category } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { todoActions } from '../../store/actions/todoActions';
 import { deleteTodo } from '../../store/reducers/todoReducer';
@@ -66,23 +66,32 @@ const useStyles = makeStyles({
     }
 });
 
-const TodoList: React.FC<{ todo: { todo: string, isComplete: boolean, id: number }, listItemStyle: {}, listItemClass: string }> = (props) => {
+const TodoList: React.FC<{ todo: { todo: string, isComplete: boolean, id: number, category: string }, listItemStyle: {}, listItemClass: string }> = (props) => {
+   
     const classes = useStyles();
     const dispatch = useDispatch()
     const todos = useSelector((state: { todos: [] }) => state.todos);
     const isLoading = useSelector((state: { isLoading: boolean }) => state.isLoading);
 
-    const todoCompleteHandler = (todo: {isComplete: boolean, todo: string, id: number}) => {
+    const todoCompleteHandler = (todo: {isComplete: boolean, todo: string, id: number, category: string}) => {
+        
+        const updatedTodo = {
+            id: todo.id,
+            todo: todo.todo,
+            category: todo.category,
+            isComplete: !todo.isComplete,
+        }
+        dispatch(updateTodoData(updatedTodo));
         dispatch(todoActions.isCompleteTodo(todo.id));
-        dispatch(updateTodoData(todo));
     }
-    const removeTodoHandler = (id: number) => {
+    const removeTodoHandler = (id: number, category: string) => {
         dispatch(todoActions.removeTodo(id));
-        dispatch(deleteTodo(id))
+        dispatch(deleteTodo(id, category))
     }
 
+
     return (
-        <ListItem style={props.listItemStyle} id={`${props.todo.id}`} className={`${classes.listItem} ${styles.todoListItem} ${props.listItemClass}`} >
+        <ListItem ref={React.createRef} style={props.listItemStyle} id={`${props.todo.id}`} className={`${classes.listItem} ${styles.todoListItem} ${props.listItemClass}`} >
             <ListItemText style={{ textDecoration: props.todo.isComplete ? 'line-through 2px' : '', }} className={classes.listItemText}>
 
                 <ListItemIcon onClick={() => { todoCompleteHandler(props.todo) }}>
@@ -92,7 +101,7 @@ const TodoList: React.FC<{ todo: { todo: string, isComplete: boolean, id: number
 
                 {props.todo.todo}
 
-                <ListItemIcon onClick={() => { removeTodoHandler(props.todo.id) }} style={{ marginLeft: 'auto', minWidth: 'max-content' }}>
+                <ListItemIcon onClick={() => { removeTodoHandler(props.todo.id, props.todo.category) }} style={{ marginLeft: 'auto', minWidth: 'max-content' }}>
                     <DeleteOutlineOutlined fontSize="large" className={classes.trash} />
                 </ListItemIcon>
             </ListItemText>

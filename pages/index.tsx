@@ -3,8 +3,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import TodoList from '../Components/TodoList/TodoList';
 import { useDispatch, useSelector } from 'react-redux';
 import { todoActions } from '../store/actions/todoActions';
-import { sendTodoData } from '../store/reducers/todoReducer';
-import { fetchTodoData } from '../store/reducers/todoReducer';
+import { sendTodoData, fetchTodoData, getCategoriesData } from '../store/reducers/todoReducer';
+
 import { makeStyles, Typography, TextField, List, Button } from '@material-ui/core';
 import { CSSTransition } from 'react-transition-group';
 import Loading from '../Components/Partials/Loading/Loading';
@@ -85,7 +85,8 @@ const Home = () => {
   const todos = useSelector((state: { todos: [] }) => state.todos);
 
   useEffect(() => {
-    todos.length === 0 && dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading))
+    todos.length === 0 && dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading));
+    dispatch(getCategoriesData(todoActions.replaceCategories));
   }, []);
 
 
@@ -100,6 +101,7 @@ const Home = () => {
       todo: inputRef.current.value,
       id: Math.ceil(Math.random() * 1000),
       isComplete: false,
+      category: 'todos'
     }
     dispatch(todoActions.addTodo(todo));
     dispatch(sendTodoData(todo));
@@ -111,6 +113,8 @@ const Home = () => {
     setShowForm((showForm) => !showForm)
   }
 
+  const defaultTodo = todos.filter((todo: {isComplete: boolean, id: number, todo: string, category: string}) => todo.category === 'todos');
+  
   return (
     <React.Fragment>
       
@@ -135,9 +139,9 @@ const Home = () => {
       <List className={`${classes.list} ${styles.todoList}`}>
         {
           !isLoading ?
-            todos.length !== 0 ? todos.map((todo: { id: number, todo: string, isComplete: boolean }) => {
+            defaultTodo.length !== 0 ? defaultTodo.map((todo: { id: number, todo: string, isComplete: boolean, category: string }) => {
               return (
-                <CSSTransition key={todo.id} in={!todo.isComplete} mountOnEnter unmountOnExit timeout={1300} classNames={styles.completedTodo}>
+                <CSSTransition ref={()=> {React.createRef()}} key={todo.id} in={!todo.isComplete} mountOnEnter unmountOnExit timeout={1300} classNames={styles.completedTodo}>
                   <TodoList listItemStyle={{ position: `${todo.isComplete ? 'absolute' : 'relative'}` }} todo={todo} listItemClass={`${todo.isComplete ? `${styles.completedTodo} ${classes.completedTodo}` : ''}`} />
                 </CSSTransition>
               )

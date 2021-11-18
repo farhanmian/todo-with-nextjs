@@ -1,0 +1,29 @@
+
+.todoList {
+  max-height: 550px;
+  min-height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+  transition: all 1s;
+}
+  
+.completedTodo {
+  animation: fallDown 1.3s forwards !important;
+  z-index: 9;
+  position: absolute;
+}
+  
+
+
+@keyframes fallDown {
+  0% {
+    box-shadow: 0 5px 10px rgba(0,0,0,.7);
+  }
+
+  100% {
+    transform: rotate(-0deg) rotateZ(-7deg) translateY(50rem);
+    box-shadow: 0 15px 20px rgba(0,0,0,1);
+    opacity: .1;
+  }
+}
