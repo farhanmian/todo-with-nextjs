@@ -38,3 +38,13 @@ a {
   overflow: hidden;
 }
 
+.todoNotFoundHeading {
+  opacity: 0;
+  animation: 1.5s headingAnimation .6s ease-out forwards;
+}
+
+@keyframes headingAnimation {
+  100% {
+    opacity: 1;
+  }
+}

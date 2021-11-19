@@ -1,15 +1,18 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link'
 import { useRouter } from 'next/dist/client/router';
 import styles from '../../../styles/Layout.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendCategory } from '../../../store/reducers/todoReducer';
+import { sendCategory, deleteCategory } from '../../../store/reducers/todoReducer';
+import { CSSTransition } from 'react-transition-group';
 
-import { Menu, Person, AssignmentTurnedIn, Delete, ListAlt, CloseRounded, Add, Category } from '@mui/icons-material';
-import { List, makeStyles, ListItemText, ListItemIcon, Divider, Typography, Button, TextField } from '@material-ui/core';
+import { Menu, AssignmentTurnedIn, Delete, ListAlt, CloseRounded, Add, Category } from '@mui/icons-material';
+import { List, makeStyles, ListItemText, ListItemIcon, Divider, Typography, Button, TextField, ClickAwayListener } from '@material-ui/core';
 import { ListItemButton } from '@mui/material';
 import { Transition as ReactTransition } from 'react-transition-group';
 import { todoActions } from '../../../store/actions/todoActions';
+import { TodoType } from '../../../store/types/types';
+
 
 const useStyles = makeStyles({
     navIcon: {
@@ -18,6 +21,9 @@ const useStyles = makeStyles({
         fontSize: 50,
         position: 'absolute',
         left: '0%'
+    },
+    drawerInnerContainer: {
+        paddingLeft: 5
     },
     colorWhite: {
         color: '#fff'
@@ -38,36 +44,103 @@ const useStyles = makeStyles({
         '& > *': {
             textTransform: 'capitalize'
         }
+    },
+    moreOptionBtn: {
+        position: 'absolute',
+        right: '0%',
+        minWidth: 'max-content',
+        padding: 3,
+        marginRight: 10
+    },
+    deleteCategoryName: {
+        textTransform: 'capitalize',
+        color: 'transparent',
+        backgroundImage: 'linear-gradient(to top right,#CD69DA, #FDA3A4)',
+        backgroundClip: 'text',
+        fontWeight: 'bold'
+    },
+    confirmationBtn: {
+        margin: 10
+    },
+    addCategoryHeading: {
+        fontSize: '1.1rem'
+    },
+    addMoreCategoryBtn: {
+        '& > span': {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-end'
+        }
     }
+
 })
 
 const Layout: React.FC<{ props: Object }> = (props) => {
     const dispatch = useDispatch();
-    const categoriesData = useSelector((state: { categories: [] }) => state.categories);
+    const categoriesData = useSelector((state: { categories: string[] }) => state.categories);
     const classes = useStyles();
-
+    const pathname = useRouter().asPath;
+    const router = useRouter();
     const categoryInputRef = useRef<HTMLInputElement>();
-    const { pathname } = useRouter();
+
     const [drawerVisibility, setDrawerVisibility] = useState(false);
-    const [selectedIndex, setSelectedIndex] = useState(pathname === '/' ? 0 : 1);
     const [createCategory, setCreateCategory] = useState(false);
-    // const [categories, setCategories] = useState([]);
-    
-    
+
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [deleteCategoryName, setDeleteCategoryName] = useState('');
+
+    const [selectedIndex, setSelectedIndex] = useState(pathname === '/' ? 0 : 1);
+
+
+    useEffect(() => {
+        const currentPath: string = pathname.replace('/', '');
+        const currentIndex = pathname !== '/[category]' && pathname === '/' ? categoriesData.indexOf('todos') : pathname === '/completed' ? categoriesData.length : categoriesData.indexOf(currentPath)
+        setSelectedIndex(currentIndex);
+        console.log(currentIndex);
+    }, [categoriesData])
+
     const handleListItemClick = (event, index) => {
         setSelectedIndex(index);
     };
 
     const formSubmitHandler = (e: React.FormEvent) => {
         e.preventDefault();
-        const categoryTitle = categoryInputRef.current.value.toLocaleLowerCase();
-        
+        const categoryTitle: string = categoryInputRef.current.value.toLocaleLowerCase();
+        const todo: TodoType = {
+            id: 0,
+            todo: 'What\'s your plan for today!',
+            isComplete: false,
+            category: categoryTitle
+        }
+        if (categoryTitle.trim().length === 0) {
+            categoryInputRef.current.focus();
+            return;
+        }
         setCreateCategory(false);
         dispatch(todoActions.addCategory(categoryTitle))
         dispatch(sendCategory(categoryTitle));
+
+        dispatch(todoActions.addTodo(todo))
     }
 
-    
+    const showDeleteConfirmationHandler = (category: string) => {
+        setDeleteCategoryName(category);
+        setShowDeleteConfirmation(true);
+    }
+
+    const addCategoryHandler = () => {
+        setCreateCategory((prevState) => !prevState);
+        setSelectedIndex(categoriesData.length);
+    }
+
+    const deleteCategoryHandler = () => {
+        console.log(deleteCategoryName);
+        dispatch(deleteCategory(deleteCategoryName));
+        dispatch(todoActions.removeCategory(deleteCategoryName));
+        setShowDeleteConfirmation(false);
+        router.replace('/');
+    }
+
     return (
         <main className="app">
             <nav className={styles.nav}>
@@ -103,7 +176,7 @@ const Layout: React.FC<{ props: Object }> = (props) => {
                 <Typography className={`${styles.heading} ${classes.colorWhite}`} variant="h4">
                     {pathname === '/'
                         ? <React.Fragment>Todo<span>List</span></React.Fragment>
-                        : <React.Fragment>Completed<span>Todos</span></React.Fragment>}
+                        : pathname !== '/[category]' && <React.Fragment>{pathname.replace('/', '')}<span>Todos</span></React.Fragment>}
                 </Typography>
 
             </nav>
@@ -111,85 +184,101 @@ const Layout: React.FC<{ props: Object }> = (props) => {
                 {props.children}
             </div>
 
-            <div className={`${styles.drawer} ${drawerVisibility ? styles.drawerActive : ''}`}>
+            <CSSTransition ref={() => { React.createRef() }} in={drawerVisibility} mountOnEnter unmountOnExit timeout={300} classNames={styles.drawer}>
+                <ClickAwayListener onClickAway={() => { setDrawerVisibility(false) }} >
+                    <div className={`${styles.drawer} ${drawerVisibility ? styles.drawerActive : ''}`}>
 
-                <List className={styles.drawerInnerContainer} component="nav">
+                        <List className={`${styles.drawerInnerContainer} ${classes.drawerInnerContainer}`} component="nav">
 
-                    {
-                        categoriesData.map((category, i) => {
+                            {
+                                categoriesData.map((category, i) => {
 
-                            return <Link key={category} href={`${category === 'todos' ? '/' : `/${category}`}`}>
+                                    return <div key={category} className={styles.categoryContainer}>
+                                        <Link href={`${category === 'todos' ? '/' : `/${category}`}`}>
+                                            <ListItemButton
+                                                style={{ height: '100%' }}
+                                                selected={selectedIndex === i}
+                                                onClick={(event) => handleListItemClick(event, i)}
+                                            >
+                                                <ListItemIcon>
+                                                    {category === 'todos' ? <ListAlt className={classes.colorWhite} /> : <Category className={classes.colorWhite} />}
+                                                </ListItemIcon>
+                                                <ListItemText className={classes.listItemText} style={{ color: '#fff' }} primary={category} />
+                                            </ListItemButton>
+                                        </Link>
+                                        <Button onClick={() => { showDeleteConfirmationHandler(category) }} className={classes.moreOptionBtn} disableElevation >
+                                            <Delete sx={{ color: '#eee' }} />
+                                        </Button>
+                                    </div>
+                                })
+                            }
+
+
+                            {createCategory &&
+                                <div className={styles.categoryFormContainer}>
+                                    <ListItemButton
+                                        style={{ width: '100%', height: '100%' }}
+                                        selected={selectedIndex === categoriesData.length} // index
+                                        onClick={(event) => handleListItemClick(event, categoriesData.length)} //index
+                                    >
+                                        <form onSubmit={formSubmitHandler} className={styles.categoryForm}>
+                                            <span className={styles.categoryFormInnerContainer}>
+                                                <ListItemIcon>
+                                                    <Category className={classes.colorWhite} />
+                                                </ListItemIcon>
+                                                <ListItemText>
+                                                    <TextField inputRef={categoryInputRef} variant="standard" color="primary" className={classes.textField} />
+                                                </ListItemText>
+                                            </span>
+                                            <span className={styles.categoryFormSubmitBtnContainer}>
+                                                <Button className={classes.categoryFormSubmitBtn} type="submit" variant="outlined" color="primary" >Add</Button>
+                                                <Button onClick={() => { setCreateCategory(false) }} className={classes.categoryFormSubmitBtn} variant="outlined" color="primary" >Cancel</Button>
+                                            </span>
+                                        </form>
+                                    </ListItemButton>
+                                </div>
+                            }
+
+                            <Link href="/completed">
                                 <ListItemButton
-                                    selected={selectedIndex === i}
-                                    onClick={(event) => handleListItemClick(event, i)}
+                                    selected={selectedIndex === categoriesData.length + 1}
+                                    onClick={(event) => handleListItemClick(event, categoriesData.length + 1)}
                                 >
                                     <ListItemIcon>
-                                        {category === 'todos' ? <ListAlt className={classes.colorWhite} /> : <Category className={classes.colorWhite} /> }
+                                        <AssignmentTurnedIn className={classes.colorWhite} />
                                     </ListItemIcon>
-                                    <ListItemText className={classes.listItemText} style={{ color: '#fff' }} primary={`${category === 'todos' ? 'Todo' : `${category}`}`} />
+                                    <ListItemText style={{ color: '#fff' }} primary="Completed" />
                                 </ListItemButton>
                             </Link>
-                        })
-                    }
+                        </List>
+                        <Divider />
+
+                        <Button style={{ position: 'absolute' }} className={`${styles.addCategoryBtn} ${classes.addMoreCategoryBtn}`} color="primary" onClick={addCategoryHandler}>
+                            <Typography noWrap className={classes.addCategoryHeading} variant="h6">Add More Categories</Typography>
+                            <Add fontSize="large" className={classes.colorWhite} />
+                        </Button>
 
 
-                    {createCategory &&
-                        <div className={styles.categoryFormContainer}>
-                            <ListItemButton
-                                style={{ width: '100%', height: '100%' }}
-                                selected={selectedIndex === 0} // index
-                                onClick={(event) => handleListItemClick(event, 0)} //index
-                            >
-                                <form onSubmit={formSubmitHandler} className={styles.categoryForm}>
-                                    <ListItemIcon>
-                                        <Category className={classes.colorWhite} />
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                        <TextField inputRef={categoryInputRef} variant="standard" color="primary" className={classes.textField} />
-                                    </ListItemText>
-                                    <Button className={classes.categoryFormSubmitBtn} type="submit" variant="outlined" color="primary" >Add</Button>
-                                </form>
-                            </ListItemButton>
-                        </div>
-                    }
+                        {/* deleteCategory confirmation */}
 
-                    <Link href="/completed">
-                        <ListItemButton
-                            selected={selectedIndex === categoriesData.length}
-                            onClick={(event) => handleListItemClick(event, categoriesData.length)}
-                        >
-                            <ListItemIcon>
-                                <AssignmentTurnedIn className={classes.colorWhite} />
-                            </ListItemIcon>
-                            <ListItemText style={{ color: '#fff' }} primary="Completed" />
-                        </ListItemButton>
-                    </Link>
-                </List>
-                <Divider />
+                        {showDeleteConfirmation &&
+                            <div className={styles.deleteCategoryConfirmationContainer}>
+                                <ClickAwayListener onClickAway={() => { setShowDeleteConfirmation(false) }}>
+                                    <div className={styles.deleteCategoryConfirmationInnerContainer}>
+                                        <Typography variant="h6" color="primary" >Are you sure you want to delete <span className={classes.deleteCategoryName}>{deleteCategoryName}</span> category!</Typography>
+                                        <Button className={classes.confirmationBtn} onClick={deleteCategoryHandler} variant="outlined" color="primary">Yes</Button>
+                                        <Button className={classes.confirmationBtn} onClick={() => { setShowDeleteConfirmation(false) }} variant="outlined" color="primary" >Cancel</Button>
+                                    </div>
+                                </ClickAwayListener>
+                            </div>
+                        }
 
-                <Button style={{ position: 'absolute' }} className={styles.addCategoryBtn} color="primary" onClick={() => { setCreateCategory((prevState) => !prevState) }}>
-                    <Add fontSize="large" className={classes.colorWhite} />
-                </Button>
-            </div>
+                    </div>
+                </ClickAwayListener>
+            </CSSTransition>
 
         </main >
     )
 }
 
 export default Layout;
-
-
-/*
-<Link href="/">
-    <ListItemButton
-        selected={selectedIndex === 0}
-        onClick={(event) => handleListItemClick(event, 0)}
-    >
-        <ListItemIcon>
-            <ListAlt className={classes.colorWhite} />
-        </ListItemIcon>
-        <ListItemText style={{ color: '#fff' }} primary="Todo" />
-</ListItemButton>
-</Link>
-
-**/

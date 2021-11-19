@@ -1,11 +1,13 @@
 import React from 'react';
 import styles from '../../styles/TodoList.module.css';
 import { ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core'
-import { CircleOutlined, CheckCircle, DeleteOutlineOutlined, SettingsBackupRestoreRounded, Category } from '@mui/icons-material';
+import { CircleOutlined, DeleteOutlineOutlined, SettingsBackupRestoreRounded } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { todoActions } from '../../store/actions/todoActions';
 import { deleteTodo } from '../../store/reducers/todoReducer';
 import { updateTodoData } from '../../store/reducers/todoReducer';
+import { Typography } from '@mui/material';
+import { TodoType } from '../../store/types/types';
 
 
 const useStyles = makeStyles({
@@ -14,7 +16,6 @@ const useStyles = makeStyles({
         padding: 15,
         marginBottom: 30,
         borderRadius: 15,
-        // border: '1px solid #fff',
         transition: 'all .3s'
     },
     listItemText: {
@@ -63,19 +64,23 @@ const useStyles = makeStyles({
         fontFamily: ' cursive',
         overflow: 'hidden',
         textDecoration: 'underline'
+    },
+    todoCategory: {
+        color: 'grey',
+        marginLeft: '1rem'
+    },
+    todoText: {
+        fontSize: '1.3rem'
     }
 });
 
-const TodoList: React.FC<{ todo: { todo: string, isComplete: boolean, id: number, category: string }, listItemStyle: {}, listItemClass: string }> = (props) => {
-   
+const TodoList: React.FC<{ todo: TodoType, listItemStyle: {}, listItemClass: string }> = (props) => {
+
     const classes = useStyles();
     const dispatch = useDispatch()
-    const todos = useSelector((state: { todos: [] }) => state.todos);
-    const isLoading = useSelector((state: { isLoading: boolean }) => state.isLoading);
-
-    const todoCompleteHandler = (todo: {isComplete: boolean, todo: string, id: number, category: string}) => {
-        
-        const updatedTodo = {
+    
+    const todoCompleteHandler = (todo: TodoType) => {
+        const updatedTodo: TodoType = {
             id: todo.id,
             todo: todo.todo,
             category: todo.category,
@@ -84,6 +89,7 @@ const TodoList: React.FC<{ todo: { todo: string, isComplete: boolean, id: number
         dispatch(updateTodoData(updatedTodo));
         dispatch(todoActions.isCompleteTodo(todo.id));
     }
+
     const removeTodoHandler = (id: number, category: string) => {
         dispatch(todoActions.removeTodo(id));
         dispatch(deleteTodo(id, category))
@@ -92,14 +98,19 @@ const TodoList: React.FC<{ todo: { todo: string, isComplete: boolean, id: number
 
     return (
         <ListItem ref={React.createRef} style={props.listItemStyle} id={`${props.todo.id}`} className={`${classes.listItem} ${styles.todoListItem} ${props.listItemClass}`} >
-            <ListItemText style={{ textDecoration: props.todo.isComplete ? 'line-through 2px' : '', }} className={classes.listItemText}>
+            <ListItemText className={classes.listItemText}>
 
                 <ListItemIcon onClick={() => { todoCompleteHandler(props.todo) }}>
                     {!props.todo.isComplete && <CircleOutlined fontSize="large" className={`${classes.circleIcon} ${styles.todoCircleIcon}`} />}
                     {props.todo.isComplete && <SettingsBackupRestoreRounded fontSize="large" className={`${classes.restoreIcon} ${styles.todoRestoreIcon}`} />}
                 </ListItemIcon>
 
-                {props.todo.todo}
+                <Typography className={classes.todoText} style={{ textDecoration: props.todo.isComplete ? 'line-through 2px' : '', }}>
+                    {props.todo.todo}
+                </Typography>
+                {props.todo.isComplete &&
+                    <Typography className={classes.todoCategory} variant="subtitle1"> ( {props.todo.category} ) </Typography>
+                }
 
                 <ListItemIcon onClick={() => { removeTodoHandler(props.todo.id, props.todo.category) }} style={{ marginLeft: 'auto', minWidth: 'max-content' }}>
                     <DeleteOutlineOutlined fontSize="large" className={classes.trash} />

@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { TodoType } from "../types/types";
 
 const initialState = {
     categories: [],
@@ -11,7 +12,7 @@ const todoSlice = createSlice({
     name: 'counter',
     initialState,
     reducers: {
-        addTodo(state, action) {
+        addTodo(state, action: {payload: TodoType}) {
             state.todos.push(action.payload);
         },
         removeTodo(state, action) {
@@ -19,13 +20,13 @@ const todoSlice = createSlice({
             const updatedTodos = state.todos.filter(todo => todo.id !== todoId);
             state.todos = updatedTodos;
         },
-        isCompleteTodo(state, action) {
+        isCompleteTodo(state, action: {payload: number}) {
             const todoId = action.payload;
             const updatedTodos = state.todos.map(todo => {
                 if (todo.id === todoId) {
-                    return { 
-                        id: todo.id, 
-                        todo: todo.todo, 
+                    return {
+                        id: todo.id,
+                        todo: todo.todo,
                         category: todo.category,
                         isComplete: !todo.isComplete,
                     }
@@ -37,19 +38,27 @@ const todoSlice = createSlice({
 
             state.todos = updatedTodos;
         },
-        replaceTodos(state, action) {
+        replaceTodos(state, action: {payload: []}) {
             state.todos = action.payload;
         },
-        isLoading(state, action) {
+        isLoading(state, action: {payload: boolean}) {
             state.isLoading = action.payload
         },
 
-        replaceCategories(state, action) {
+        replaceCategories(state, action: {payload: string[]}) {
             state.categories = action.payload;
         },
-        addCategory(state, action) {
+        addCategory(state, action: {payload: string}) {
             const category = action.payload;
             state.categories.push(category);
+        },
+        removeCategory(state, action: {payload: string}) {
+            const category = action.payload;
+            const updatedCategory = state.categories.filter(item => item !== category)
+            const updatedTodos = state.todos.filter(todo => todo.category !== category);
+            
+            state.todos = updatedTodos;
+            state.categories = updatedCategory;
         }
     }
 });
@@ -57,7 +66,7 @@ const todoSlice = createSlice({
 export default todoSlice;
 
 
-export const sendTodoData = (todo: { todo: string, isComplete: boolean, id: number, category: string, }) => {
+export const sendTodoData = (todo: TodoType) => {
 
     return async () => {
         fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${todo.category}/${todo.id}.json`, {
@@ -70,13 +79,17 @@ export const sendTodoData = (todo: { todo: string, isComplete: boolean, id: numb
     }
 };
 
-export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoading: (parameter: boolean) => void) => {
-    return async (dispatch: any) => {
+
+export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoading: (parameter: boolean) => void, replaceCategory: (parameter: string[]) => void) => {
+    return async (dispatch: (parameter: void)=> void ) => {
         const fetchData = async () => {
             dispatch(isLoading(true));
             const res = await fetch('https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/.json');
             if (res.ok) {
                 const data = await res.json();
+                const categories = data && Object.keys(data).map(key => {
+                    return key
+                });
 
                 const objData = data && Object.keys(data).map((key, i) => {
                     return data[key]
@@ -88,7 +101,7 @@ export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoadi
                     })
                 });
                 const arrayOfObjects = [].concat.apply([], aryOfData);
-                
+
                 const arrayOfArrys = arrayOfObjects.map((todo: object) => {
                     return Object.keys(todo).map(key => {
                         return todo[key];
@@ -97,6 +110,7 @@ export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoadi
                 const arrayOfTodo = [].concat.apply([], arrayOfArrys);
                 arrayOfTodo ? dispatch(replaceTodos(arrayOfTodo)) : dispatch(replaceTodos([]));
 
+                categories ? dispatch(replaceCategory(categories)) : dispatch(replaceCategory(['todos'])) ;
                 dispatch(isLoading(false));
             } else if (!res.ok) {
                 dispatch(isLoading(false));
@@ -108,7 +122,7 @@ export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoadi
 }
 
 
-export const updateTodoData = (todo: { isComplete: boolean, todo: string, id: number, category: string }) => {
+export const updateTodoData = (todo: TodoType) => {
     const category = todo.category;
     const id = todo.id;
 
@@ -136,10 +150,16 @@ export const deleteTodo = (id: number, category: string) => {
 
 export const sendCategory = (title: string) => {
     return async () => {
-        const id = Math.ceil(Math.random() * 1000)
+        const id = 'initialTodo';
+        const todo = {
+            id,
+            todo: 'What\'s your plan for today!',
+            isComplete: false,
+            category: `${title}`
+        }
         fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${title}/${id}.json`, {
             method: 'POST',
-            body: JSON.stringify({ id, todo: 'going to gym', isComplete: false, category: `${title}` }),
+            body: JSON.stringify(todo),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -147,17 +167,13 @@ export const sendCategory = (title: string) => {
     }
 };
 
-
-export const getCategoriesData = (replaceCategory) => {
-    return async (dispatch) => {
-        const res = await fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/.json`);
-        const data = await res.json();
-
-        const categories = Object.keys(data).map(key => {
-            return key
+export const deleteCategory = (category: string) => {
+    return () => {
+        fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${category}.json`, {
+            method: 'Delete',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
-        dispatch(replaceCategory(categories));
     }
-};
-
-
+}
