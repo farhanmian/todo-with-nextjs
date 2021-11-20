@@ -96,31 +96,32 @@ const Layout: React.FC<{ props: Object }> = (props) => {
         const currentPath: string = pathname.replace('/', '');
         const currentIndex = pathname !== '/[category]' && pathname === '/' ? categoriesData.indexOf('todos') : pathname === '/completed' ? categoriesData.length : categoriesData.indexOf(currentPath)
         setSelectedIndex(currentIndex);
-        console.log(currentIndex);
-    }, [categoriesData])
 
-    const handleListItemClick = (event, index) => {
+    }, [categoriesData, pathname])
+
+    const handleListItemClick = (event: React.MouseEvent, index: number) => {
         setSelectedIndex(index);
     };
 
     const formSubmitHandler = (e: React.FormEvent) => {
         e.preventDefault();
-        const categoryTitle: string = categoryInputRef.current.value.toLocaleLowerCase();
+        
+        const categoryTitle: string | undefined = categoryInputRef.current?.value.toLocaleLowerCase();
         const todo: TodoType = {
             id: 0,
             todo: 'What\'s your plan for today!',
             isComplete: false,
-            category: categoryTitle
+            category: categoryTitle ? categoryTitle : ''
         }
-        if (categoryTitle.trim().length === 0) {
-            categoryInputRef.current.focus();
+        if (categoryTitle?.trim().length === 0) {
+            categoryInputRef.current?.focus();
             return;
         }
         setCreateCategory(false);
-        dispatch(todoActions.addCategory(categoryTitle))
-        dispatch(sendCategory(categoryTitle));
+        dispatch(todoActions.addCategory(categoryTitle ? categoryTitle : ''))
+        dispatch(sendCategory(categoryTitle ? categoryTitle : ''));
 
-        dispatch(todoActions.addTodo(todo))
+        dispatch(todoActions.addTodo(todo));
     }
 
     const showDeleteConfirmationHandler = (category: string) => {
@@ -215,28 +216,30 @@ const Layout: React.FC<{ props: Object }> = (props) => {
 
 
                             {createCategory &&
-                                <div className={styles.categoryFormContainer}>
-                                    <ListItemButton
-                                        style={{ width: '100%', height: '100%' }}
-                                        selected={selectedIndex === categoriesData.length} // index
-                                        onClick={(event) => handleListItemClick(event, categoriesData.length)} //index
-                                    >
-                                        <form onSubmit={formSubmitHandler} className={styles.categoryForm}>
-                                            <span className={styles.categoryFormInnerContainer}>
-                                                <ListItemIcon>
-                                                    <Category className={classes.colorWhite} />
-                                                </ListItemIcon>
-                                                <ListItemText>
-                                                    <TextField inputRef={categoryInputRef} variant="standard" color="primary" className={classes.textField} />
-                                                </ListItemText>
-                                            </span>
-                                            <span className={styles.categoryFormSubmitBtnContainer}>
-                                                <Button className={classes.categoryFormSubmitBtn} type="submit" variant="outlined" color="primary" >Add</Button>
-                                                <Button onClick={() => { setCreateCategory(false) }} className={classes.categoryFormSubmitBtn} variant="outlined" color="primary" >Cancel</Button>
-                                            </span>
-                                        </form>
-                                    </ListItemButton>
-                                </div>
+                                <ClickAwayListener onClickAway={()=> {setCreateCategory(false)}}>
+                                    <div className={styles.categoryFormContainer}>
+                                        <ListItemButton
+                                            style={{ width: '100%', height: '100%', cursor: 'auto' }}
+                                            selected={selectedIndex === categoriesData.length} // index
+                                            onClick={(event) => handleListItemClick(event, categoriesData.length)} //index
+                                        >
+                                            <form onSubmit={formSubmitHandler} className={styles.categoryForm}>
+                                                <span className={styles.categoryFormInnerContainer}>
+                                                    <ListItemIcon>
+                                                        <Category className={classes.colorWhite} />
+                                                    </ListItemIcon>
+                                                    <ListItemText>
+                                                        <TextField inputRef={categoryInputRef} autoFocus variant="standard" color="primary" className={classes.textField} />
+                                                    </ListItemText>
+                                                </span>
+                                                <span className={styles.categoryFormSubmitBtnContainer}>
+                                                    <Button className={classes.categoryFormSubmitBtn} type="submit" variant="outlined" color="primary" >Add</Button>
+                                                    <Button onClick={() => { setCreateCategory(false) }} className={classes.categoryFormSubmitBtn} variant="outlined" color="primary" >Cancel</Button>
+                                                </span>
+                                            </form>
+                                        </ListItemButton>
+                                    </div>
+                                </ClickAwayListener>
                             }
 
                             <Link href="/completed">

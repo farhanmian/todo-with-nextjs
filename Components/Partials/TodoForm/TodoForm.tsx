@@ -67,19 +67,19 @@ const TodoForm = () => {
     const addTodoHandler = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (inputRef.current.value.trim().length === 0) {
+        if (inputRef.current?.value.trim().length === 0) {
             return;
         }
 
         const todo = {
-            todo: inputRef.current.value,
+            todo: inputRef.current ? inputRef.current?.value : '',
             id: Math.ceil(Math.random() * 1000),
             isComplete: false,
             category: pathName === '/' ? 'todos' : pathName.replace('/', '')
         }
         dispatch(todoActions.addTodo(todo));
         dispatch(sendTodoData(todo));
-        inputRef.current.value = '';
+        inputRef.current ? inputRef.current.value = '' : null;
     }
 
 

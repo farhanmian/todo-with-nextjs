@@ -80,6 +80,7 @@
   animation: slideIn .4s ease-out forwards;
   transition: all .4s;
 }
+
 .categoryForm {
   width: 100%;
 }
@@ -131,6 +132,7 @@
 
 @keyframes slideIn {
   100% {
+    transition: all .4s;
     transform: translateX(0);
   }
 }

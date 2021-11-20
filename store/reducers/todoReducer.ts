@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { TodoType } from "../types/types";
 
-const initialState = {
+const initialState : {categories: string[], todos: TodoType[], isLoading: boolean} = {
     categories: [],
     todos: [],
     isLoading: true,
@@ -38,7 +38,7 @@ const todoSlice = createSlice({
 
             state.todos = updatedTodos;
         },
-        replaceTodos(state, action: {payload: []}) {
+        replaceTodos(state, action: {payload: TodoType[]}) {
             state.todos = action.payload;
         },
         isLoading(state, action: {payload: boolean}) {
@@ -80,7 +80,7 @@ export const sendTodoData = (todo: TodoType) => {
 };
 
 
-export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoading: (parameter: boolean) => void, replaceCategory: (parameter: string[]) => void) => {
+export const fetchTodoData = (replaceTodos: (parameter: TodoType[]) => void, isLoading: (parameter: boolean) => void, replaceCategory: (parameter: string[]) => void) => {
     return async (dispatch: (parameter: void)=> void ) => {
         const fetchData = async () => {
             dispatch(isLoading(true));
@@ -95,20 +95,23 @@ export const fetchTodoData = (replaceTodos: (parameter: object) => void, isLoadi
                     return data[key]
                 });
 
-                const aryOfData = objData && objData.map(todo => {
-                    return Object.keys(todo).map(key => {
-                        return todo[key]
+                const aryOfData: [] = objData && objData.map((todo: {}[]) => {
+                    return Object.keys(todo).map((key) => {
+                        const id: number = +key
+                        return todo[id]
                     })
                 });
+
                 const arrayOfObjects = [].concat.apply([], aryOfData);
 
-                const arrayOfArrys = arrayOfObjects.map((todo: object) => {
+                const arrayOfArrys = arrayOfObjects.map((todo) => {
                     return Object.keys(todo).map(key => {
                         return todo[key];
                     })
                 });
-                const arrayOfTodo = [].concat.apply([], arrayOfArrys);
-                arrayOfTodo ? dispatch(replaceTodos(arrayOfTodo)) : dispatch(replaceTodos([]));
+
+                const arrayOfTodo: TodoType[] = [].concat.apply([], arrayOfArrys);
+                dispatch(replaceTodos(arrayOfTodo ? arrayOfTodo : []))
 
                 categories ? dispatch(replaceCategory(categories)) : dispatch(replaceCategory(['todos'])) ;
                 dispatch(isLoading(false));
@@ -150,7 +153,7 @@ export const deleteTodo = (id: number, category: string) => {
 
 export const sendCategory = (title: string) => {
     return async () => {
-        const id = 'initialTodo';
+        const id = 0;
         const todo = {
             id,
             todo: 'What\'s your plan for today!',

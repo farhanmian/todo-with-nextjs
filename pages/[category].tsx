@@ -38,28 +38,24 @@ const Complete = () => {
     const isLoading = useSelector((state: { isLoading: boolean }) => state.isLoading);
     const todos = useSelector((state: { todos: Array<TodoType> }) => state.todos);
     const categoriesData = useSelector((state: { categories: string[] }) => state.categories)
-    const pathName = useRouter().query.category;
+    const pathName = useRouter().asPath;
+    const pathNameWithoutSlash = pathName.replace('/', '');
     const router = useRouter();
+
 
     useEffect(() => {
         todos.length === 0 && dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading, todoActions.replaceCategories));
     }, []);
-    useEffect(() => {
-        categoriesData.length > 0 && categoriesData.map(category => {
-            category === pathName || 'completed' ? '' : router.replace('/');
-        });
-    }, [categoriesData]);
 
-
-    const completedTodos = pathName === 'completed' && todos.filter(todo => todo.isComplete === true);
-    const otherTodos = todos.filter(todo => todo.category === pathName);
+    const completedTodos = pathNameWithoutSlash === 'completed' && todos.filter(todo => todo.isComplete === true);
+    const otherTodos = todos.filter(todo => todo.category === pathNameWithoutSlash);
     const otherActiveTodos = otherTodos.filter(todo => todo.isComplete === false);
 
 
     const showCompletedTodos = (
-        completedTodos.length > 0 ? completedTodos.map((todo: TodoType) => {
+        completedTodos && completedTodos.length > 0 ? completedTodos.map((todo: TodoType) => {
             return (
-                <TodoList listItemClass="" key={todo.id} listItemStyle={null} todo={todo} />
+                <TodoList listItemClass="" key={todo.id} listItemStyle={{ position: 'relative' }} todo={todo} />
             )
         }) : <Typography className={classes.addTodoHeading} variant="h4">No Completed Todo Found!</Typography>
     );
@@ -82,7 +78,7 @@ const Complete = () => {
                 {!isLoading ? completedTodos ? showCompletedTodos : showOtherTodos : <Loading />}
             </List>
 
-            {pathName !== 'completed' && <TodoForm />}
+            {pathNameWithoutSlash !== 'completed' && <TodoForm />}
         </React.Fragment>
     )
 }

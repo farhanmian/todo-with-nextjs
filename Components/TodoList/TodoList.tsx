@@ -30,10 +30,15 @@ const useStyles = makeStyles({
     trash: {
         marginLeft: 'auto',
         color: '#eee',
+        cursor: 'pointer',
+        transition: 'all .3s',
         '&:active': {
             '& > *': {
-                filter: 'drop-shadow(7px 10px 25px #000)'
+                filter: 'drop-shadow(7px 10px 25px #FF8AB0)'
             }
+        },
+        '&:hover': {
+            color: '#FF8AB0'
         }
     },
     circleIcon: {
