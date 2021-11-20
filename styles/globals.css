@@ -43,6 +43,25 @@ a {
   animation: 1.5s headingAnimation .6s ease-out forwards;
 }
 
+.todoList {
+  max-height: 550px;
+  min-height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+  transition: all 1s;
+}
+
+.todoList::-webkit-scrollbar {
+  display: none;
+}
+
+.todoList {
+  -ms-overflow-style: auto;
+  scrollbar-color: grey transparent ;   
+}
+
+
 @keyframes headingAnimation {
   100% {
     opacity: 1;

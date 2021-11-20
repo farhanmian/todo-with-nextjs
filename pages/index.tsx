@@ -1,14 +1,14 @@
 import styles from '../styles/Home.module.css';
 import React, { useEffect } from 'react';
-import TodoList from '../Components/TodoList/TodoList';
+import TodoList from '../Components/partials/TodoList/TodoList';
 import { useDispatch, useSelector } from 'react-redux';
 import { todoActions } from '../store/actions/todoActions';
 import { fetchTodoData } from '../store/reducers/todoReducer';
 
 import { makeStyles, Typography, List } from '@material-ui/core';
 import { CSSTransition } from 'react-transition-group';
-import Loading from '../Components/Partials/Loading/Loading';
-import TodoForm from '../Components/Partials/TodoForm/TodoForm';
+import Loading from '../Components/partials/Loading/Loading';
+import TodoForm from '../Components/partials/TodoForm/TodoForm';
 
 import { TodoType } from '../store/types/types';
 
@@ -55,7 +55,7 @@ const Home = () => {
       
       <TodoForm />
 
-      <List className={`${classes.list} ${styles.todoList}`}>
+      <List className={`${classes.list} ${styles.todoList} todoList`}>
         {
           !isLoading ?
             <React.Fragment>

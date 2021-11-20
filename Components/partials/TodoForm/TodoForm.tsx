@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useRef } from "react";
 import styles from '../../../styles/TodoForm.module.css';
 import { Button, TextField, makeStyles } from '@material-ui/core';
+import { Add } from "@material-ui/icons";
 
 import { useDispatch } from 'react-redux';
 import { todoActions } from "../../../store/actions/todoActions";
@@ -22,6 +23,7 @@ const useStyles = makeStyles({
         minWidth: 55,
         maxWidth: 55,
         maxHeight: 55,
+        minHeight: 55,
         borderRadius: 15,
         padding: 5,
         fontSize: 30,
@@ -68,6 +70,7 @@ const TodoForm = () => {
         e.preventDefault();
 
         if (inputRef.current?.value.trim().length === 0) {
+            inputRef.current.focus();
             return;
         }
 
@@ -86,7 +89,7 @@ const TodoForm = () => {
     return (
         <Fragment>
             <Button onClick={formVisibilityHandler} className={`${classes.addBtn} ${styles.addBtn}`} variant="contained">
-                +
+                <Add style={{ transition: 'all .4s', transform: showForm ? 'rotate(45deg)' : 'rotate(0deg)' }} />
             </Button>
 
             <CSSTransition ref={() => { React.createRef() }} in={showForm} mountOnEnter unmountOnExit timeout={400} classNames={styles.form}>
@@ -94,7 +97,7 @@ const TodoForm = () => {
                     <form className={`${styles.form} ${!showForm && styles.formClose}`} onSubmit={addTodoHandler}>
                         <div className={styles.formInnerContainer}>
                             <div className={styles.formOvlay} />
-                            <TextField InputLabelProps={{ className: classes.inputLabel }} inputRef={inputRef} className={classes.textField} size="small" label="Write Todo" variant="filled" color="primary" />
+                            <TextField autoFocus InputLabelProps={{ className: classes.inputLabel }} inputRef={inputRef} className={classes.textField} size="small" label="Write Todo" variant="filled" color="primary" />
                             <Button type="submit" variant="outlined" className={`${classes.btn} ${styles.formSubmitBtn}`} disableElevation color="primary" >Add Todo</Button>
                         </div>
                     </form>

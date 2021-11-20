@@ -45,15 +45,6 @@
   position: absolute;
 }
 
-.todoList {
-  max-height: 550px;
-  min-height: 500px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  position: relative;
-  transition: all 1s;
-}
-
 
 @keyframes popup {
   0% {

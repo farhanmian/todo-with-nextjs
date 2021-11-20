@@ -23,7 +23,7 @@
   
 .todoList {
     -ms-overflow-style: auto;
-    scrollbar-color: grey transparent;   
+    scrollbar-color: grey transparent ;   
 }
 
 

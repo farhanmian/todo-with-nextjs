@@ -1,13 +1,13 @@
 import React from 'react';
-import styles from '../../styles/TodoList.module.css';
+import styles from '../../../styles/TodoList.module.css';
 import { ListItem, ListItemIcon, ListItemText, makeStyles } from '@material-ui/core'
 import { CircleOutlined, DeleteOutlineOutlined, SettingsBackupRestoreRounded } from '@mui/icons-material';
-import { useSelector, useDispatch } from 'react-redux';
-import { todoActions } from '../../store/actions/todoActions';
-import { deleteTodo } from '../../store/reducers/todoReducer';
-import { updateTodoData } from '../../store/reducers/todoReducer';
+import { useDispatch } from 'react-redux';
+import { todoActions } from '../../../store/actions/todoActions';
+import { deleteTodo } from '../../../store/reducers/todoReducer';
+import { updateTodoData } from '../../../store/reducers/todoReducer';
 import { Typography } from '@mui/material';
-import { TodoType } from '../../store/types/types';
+import { TodoType } from '../../../store/types/types';
 
 
 const useStyles = makeStyles({

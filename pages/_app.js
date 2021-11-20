@@ -4,7 +4,7 @@ import store from '../store/store.ts';
 import { createWrapper } from 'next-redux-wrapper';
 import { ThemeProvider } from '@material-ui/core';
 import theme from "../theme";
-import Layout from '../Components/Partials/Layout/Layout';
+import Layout from '../Components/partials/Layout/Layout';
 
 function MyApp({ Component, pageProps }) {
   return (

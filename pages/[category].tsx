@@ -3,12 +3,12 @@ import styles from '../styles/Category.module.css';
 import { useRouter } from "next/dist/client/router";
 import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
-import TodoList from "../Components/TodoList/TodoList";
+import TodoList from "../Components/partials/TodoList/TodoList";
 import { todoActions } from '../store/actions/todoActions';
-import Loading from '../Components/Partials/Loading/Loading';
+import Loading from '../Components/partials/Loading/Loading';
 import { fetchTodoData } from '../store/reducers/todoReducer';
 import { Typography, makeStyles, List } from "@material-ui/core";
-import TodoForm from "../Components/Partials/TodoForm/TodoForm";
+import TodoForm from "../Components/partials/TodoForm/TodoForm";
 
 import { TodoType } from "../store/types/types";
 
@@ -37,10 +37,8 @@ const Complete = () => {
     const dispatch = useDispatch();
     const isLoading = useSelector((state: { isLoading: boolean }) => state.isLoading);
     const todos = useSelector((state: { todos: Array<TodoType> }) => state.todos);
-    const categoriesData = useSelector((state: { categories: string[] }) => state.categories)
     const pathName = useRouter().asPath;
     const pathNameWithoutSlash = pathName.replace('/', '');
-    const router = useRouter();
 
 
     useEffect(() => {
@@ -74,7 +72,7 @@ const Complete = () => {
 
     return (
         <React.Fragment>
-            <List className={`${classes.list} ${styles.todoList}`}>
+            <List className={`${classes.list} ${styles.todoList} todoList`}>
                 {!isLoading ? completedTodos ? showCompletedTodos : showOtherTodos : <Loading />}
             </List>
 

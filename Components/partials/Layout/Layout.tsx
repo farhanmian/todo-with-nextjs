@@ -111,7 +111,7 @@ const Layout: React.FC<{ props: Object }> = (props) => {
             id: 0,
             todo: 'What\'s your plan for today!',
             isComplete: false,
-            category: categoryTitle ? categoryTitle : ''
+            category: 'none'
         }
         if (categoryTitle?.trim().length === 0) {
             categoryInputRef.current?.focus();
@@ -122,6 +122,7 @@ const Layout: React.FC<{ props: Object }> = (props) => {
         dispatch(sendCategory(categoryTitle ? categoryTitle : ''));
 
         dispatch(todoActions.addTodo(todo));
+        router.push(`/${categoryTitle}`);
     }
 
     const showDeleteConfirmationHandler = (category: string) => {

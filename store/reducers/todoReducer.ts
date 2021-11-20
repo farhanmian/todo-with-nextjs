@@ -158,7 +158,7 @@ export const sendCategory = (title: string) => {
             id,
             todo: 'What\'s your plan for today!',
             isComplete: false,
-            category: `${title}`
+            category: 'none'
         }
         fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${title}/${id}.json`, {
             method: 'POST',
