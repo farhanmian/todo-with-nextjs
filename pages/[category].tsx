@@ -45,6 +45,12 @@ const Complete = () => {
         todos.length === 0 && dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading, todoActions.replaceCategories));
     }, []);
 
+    useEffect(() => {
+        if (!window.navigator.onLine) {
+            throw new Error('check your internet connection!');
+        }
+    })
+
     const completedTodos = pathNameWithoutSlash === 'completed' && todos.filter(todo => todo.isComplete === true);
     const otherTodos = todos.filter(todo => todo.category === pathNameWithoutSlash);
     const otherActiveTodos = otherTodos.filter(todo => todo.isComplete === false);

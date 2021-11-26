@@ -66,17 +66,18 @@ const TodoForm = () => {
 
                                                                                                                                                                                                                                                                                                                                                                                                                 
     const formVisibilityHandler = () => {
-        setShowForm((showForm) => !showForm)
+        setShowForm((showForm) => !showForm);
     }
 
     const addTodoHandler = (e: React.FormEvent) => {
         e.preventDefault();
 
+        if(!window.navigator.onLine) {return;}
         if (inputRef.current?.value.trim().length === 0) {
             inputRef.current.focus();
             return;
         }
-
+        
         const todo = {
             todo: inputRef.current ? inputRef.current?.value : '',
             id: todos.length,

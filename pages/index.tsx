@@ -49,6 +49,11 @@ const Home = () => {
     todos.length === 0 && dispatch(fetchTodoData(todoActions.replaceTodos, todoActions.isLoading, todoActions.replaceCategories));
   }, []);
 
+  useEffect(()=> {
+    if(!window.navigator.onLine) {
+      throw new Error('check your internet connection!');
+    }
+  })
 
   const defaultTodo = todos && todos.filter((todo: TodoType) => todo.category === 'todos');
   const defaultActiveTodos = defaultTodo.filter((todo: TodoType) => todo.isComplete === false);

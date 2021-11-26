@@ -85,6 +85,7 @@ const TodoList: React.FC<{ todo: TodoType, listItemStyle: {}, listItemClass: str
     const dispatch = useDispatch()
     
     const todoCompleteHandler = (todo: TodoType) => {
+        if(!window.navigator.onLine) {return;}
         const updatedTodo: TodoType = {
             id: todo.id,
             todo: todo.todo,
@@ -96,6 +97,7 @@ const TodoList: React.FC<{ todo: TodoType, listItemStyle: {}, listItemClass: str
     }
 
     const removeTodoHandler = (id: number, category: string) => {
+        if(!window.navigator.onLine) {return;}
         dispatch(todoActions.removeTodo(id));
         dispatch(deleteTodo(id, category))
     }

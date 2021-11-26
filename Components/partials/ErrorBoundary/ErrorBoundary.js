@@ -15,9 +15,11 @@ export default class ErrorBoundary extends Component {
     render() {
         if (this.state.hasError) {
             return <div className="errorBoundary">
-                <Typography variant="h4" style={{lineHeight: 1.7, fontWeight: 500}} >Sorry Something went wrong!</Typography>
-                <Typography variant="h4" style={{lineHeight: 1.7, fontWeight: 500}} >Try again later.</Typography>
-                <Button variant="contained" style={{textTransform: 'capitalize'}} onClick={()=> {window.location.reload()}} disableElevation>
+                <Typography variant="h4" style={{ lineHeight: 1.7, fontWeight: 500 }} >Sorry Something went wrong!</Typography>
+                <Typography variant="h4" style={{ lineHeight: 1.7, fontWeight: 500 }} >
+                    {!window.navigator.onLine ? 'check your internet connection' : 'Try again later.'}
+                </Typography>
+                <Button variant="contained" style={{ textTransform: 'capitalize' }} onClick={() => { window.location.reload() }} disableElevation>
                     Try Again Now
                 </Button>
             </div>
