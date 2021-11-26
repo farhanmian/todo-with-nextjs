@@ -78,6 +78,7 @@ const useStyles = makeStyles({
 const Layout: React.FC<{ props: Object }> = (props) => {
     const dispatch = useDispatch();
     const categoriesData = useSelector((state: { categories: string[] }) => state.categories);
+    const todos = useSelector((state: { todos: TodoType[] }) => state.todos);
     const classes = useStyles();
     const pathname = useRouter().asPath;
     const router = useRouter();
@@ -118,10 +119,10 @@ const Layout: React.FC<{ props: Object }> = (props) => {
             return;
         }
         setCreateCategory(false);
-        dispatch(todoActions.addCategory(categoryTitle ? categoryTitle : ''))
-        dispatch(sendCategory(categoryTitle ? categoryTitle : ''));
+        dispatch(todoActions.addCategory(categoryTitle ? categoryTitle : ''));
+        dispatch(sendCategory(categoryTitle ? categoryTitle : '', categoriesData.length-1));
 
-        dispatch(todoActions.addTodo(todo));
+        // dispatch(todoActions.addTodo(todo));
         router.push(`/${categoryTitle}`);
     }
 
@@ -137,7 +138,7 @@ const Layout: React.FC<{ props: Object }> = (props) => {
 
     const deleteCategoryHandler = () => {
         console.log(deleteCategoryName);
-        dispatch(deleteCategory(deleteCategoryName));
+        dispatch(deleteCategory(deleteCategoryName, todos));
         dispatch(todoActions.removeCategory(deleteCategoryName));
         setShowDeleteConfirmation(false);
         router.replace('/');

@@ -3,12 +3,13 @@ import styles from '../../../styles/TodoForm.module.css';
 import { Button, TextField, makeStyles } from '@material-ui/core';
 import { Add } from "@material-ui/icons";
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { todoActions } from "../../../store/actions/todoActions";
 import { sendTodoData } from '../../../store/reducers/todoReducer';
 import { useRouter } from "next/dist/client/router";
 import { ClickAwayListener } from "@mui/material";
 import { CSSTransition } from "react-transition-group";
+import { TodoType } from "../../../store/types/types";
 
 
 const useStyles = makeStyles({
@@ -58,10 +59,12 @@ const TodoForm = () => {
     const dispatch = useDispatch();
     const [showForm, setShowForm] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const todos = useSelector((state: { todos: TodoType[] }) => state.todos);
+
 
     const pathName = useRouter().asPath;
 
-
+                                                                                                                                                                                                                                                                                                                                                                                                                
     const formVisibilityHandler = () => {
         setShowForm((showForm) => !showForm)
     }
@@ -76,11 +79,11 @@ const TodoForm = () => {
 
         const todo = {
             todo: inputRef.current ? inputRef.current?.value : '',
-            id: Math.ceil(Math.random() * 1000),
+            id: todos.length,
             isComplete: false,
             category: pathName === '/' ? 'todos' : pathName.replace('/', '')
         }
-        dispatch(todoActions.addTodo(todo));
+        dispatch(todoActions.addTodo(todo));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
         dispatch(sendTodoData(todo));
         inputRef.current ? inputRef.current.value = '' : null;
     }
@@ -89,10 +92,10 @@ const TodoForm = () => {
     return (
         <Fragment>
             <Button onClick={formVisibilityHandler} className={`${classes.addBtn} ${styles.addBtn}`} variant="contained">
-                <Add style={{ transition: 'all .4s', transform: showForm ? 'rotate(45deg)' : 'rotate(0deg)' }} />
+                <Add style={{ transition: 'all .3s', transform: showForm ? 'rotate(45deg)' : 'rotate(0deg)' }} />
             </Button>
 
-            <CSSTransition ref={() => { React.createRef() }} in={showForm} mountOnEnter unmountOnExit timeout={400} classNames={styles.form}>
+            <CSSTransition ref={() => { React.createRef() }} in={showForm} mountOnEnter unmountOnExit timeout={300} classNames={styles.form}>
                 <ClickAwayListener onClickAway={() => { setShowForm(false) }}>
                     <form className={`${styles.form} ${!showForm && styles.formClose}`} onSubmit={addTodoHandler}>
                         <div className={styles.formInnerContainer}>

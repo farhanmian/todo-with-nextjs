@@ -10,7 +10,10 @@ import { CSSTransition } from 'react-transition-group';
 import Loading from '../Components/partials/Loading/Loading';
 import TodoForm from '../Components/partials/TodoForm/TodoForm';
 
+
 import { TodoType } from '../store/types/types';
+
+
 
 
 const useStyles = makeStyles({
@@ -47,12 +50,12 @@ const Home = () => {
   }, []);
 
 
-  const defaultTodo = todos.filter((todo: TodoType) => todo.category === 'todos');
+  const defaultTodo = todos && todos.filter((todo: TodoType) => todo.category === 'todos');
   const defaultActiveTodos = defaultTodo.filter((todo: TodoType) => todo.isComplete === false);
 
   return (
     <React.Fragment>
-      
+
       <TodoForm />
 
       <List className={`${classes.list} ${styles.todoList} todoList`}>
@@ -66,7 +69,7 @@ const Home = () => {
                   </CSSTransition>
                 )
               })}
-              
+
               {defaultActiveTodos.length === 0 && <Typography className={`${classes.addTodoHeading} todoNotFoundHeading`} variant="h4">No Todo Found! <br /> Add Todos</Typography>}
             </React.Fragment>
             : <Loading />

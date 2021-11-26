@@ -17,7 +17,7 @@
     z-index: 999;
 }
 .formClose {
-    animation: popDown .4s linear forwards;
+    animation: popDown .3s linear forwards;
 }
 
 .formInnerContainer {

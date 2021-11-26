@@ -61,6 +61,18 @@ a {
   scrollbar-color: grey transparent ;   
 }
 
+.errorBoundary {
+  width: max-content;
+  padding: 20px 30px;
+  margin: auto;
+  margin-top: 5rem;
+  text-align: center;
+  background-color: #21212bdd;
+  color: #ccc;
+  border-radius: 10px;
+
+}
+
 
 @keyframes headingAnimation {
   100% {

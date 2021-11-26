@@ -1,7 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { TodoType } from "../types/types";
+import { getDatabase, ref, set, child, get, remove, update } from "firebase/database";
+import { formControlClasses } from "@mui/material";
 
-const initialState : {categories: string[], todos: TodoType[], isLoading: boolean} = {
+
+const initialState: { categories: string[], todos: TodoType[], isLoading: boolean } = {
     categories: [],
     todos: [],
     isLoading: true,
@@ -12,7 +15,7 @@ const todoSlice = createSlice({
     name: 'counter',
     initialState,
     reducers: {
-        addTodo(state, action: {payload: TodoType}) {
+        addTodo(state, action: { payload: TodoType }) {
             state.todos.push(action.payload);
         },
         removeTodo(state, action) {
@@ -20,7 +23,7 @@ const todoSlice = createSlice({
             const updatedTodos = state.todos.filter(todo => todo.id !== todoId);
             state.todos = updatedTodos;
         },
-        isCompleteTodo(state, action: {payload: number}) {
+        isCompleteTodo(state, action: { payload: number }) {
             const todoId = action.payload;
             const updatedTodos = state.todos.map(todo => {
                 if (todo.id === todoId) {
@@ -38,25 +41,25 @@ const todoSlice = createSlice({
 
             state.todos = updatedTodos;
         },
-        replaceTodos(state, action: {payload: TodoType[]}) {
+        replaceTodos(state, action: { payload: TodoType[] }) {
             state.todos = action.payload;
         },
-        isLoading(state, action: {payload: boolean}) {
+        isLoading(state, action: { payload: boolean }) {
             state.isLoading = action.payload
         },
 
-        replaceCategories(state, action: {payload: string[]}) {
+        replaceCategories(state, action: { payload: string[] }) {
             state.categories = action.payload;
         },
-        addCategory(state, action: {payload: string}) {
+        addCategory(state, action: { payload: string }) {
             const category = action.payload;
             state.categories.push(category);
         },
-        removeCategory(state, action: {payload: string}) {
+        removeCategory(state, action: { payload: string }) {
             const category = action.payload;
             const updatedCategory = state.categories.filter(item => item !== category)
             const updatedTodos = state.todos.filter(todo => todo.category !== category);
-            
+
             state.todos = updatedTodos;
             state.categories = updatedCategory;
         }
@@ -66,116 +69,107 @@ const todoSlice = createSlice({
 export default todoSlice;
 
 
+
 export const sendTodoData = (todo: TodoType) => {
-
-    return async () => {
-        fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${todo.category}/${todo.id}.json`, {
-            method: 'POST',
-            body: JSON.stringify(todo),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-    }
-};
-
-
-export const fetchTodoData = (replaceTodos: (parameter: TodoType[]) => void, isLoading: (parameter: boolean) => void, replaceCategory: (parameter: string[]) => void) => {
-    return async (dispatch: (parameter: void)=> void ) => {
-        const fetchData = async () => {
-            dispatch(isLoading(true));
-            const res = await fetch('https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/.json');
-            if (res.ok) {
-                const data = await res.json();
-                const categories = data && Object.keys(data).map(key => {
-                    return key
-                });
-
-                const objData = data && Object.keys(data).map((key, i) => {
-                    return data[key]
-                });
-
-                const aryOfData: [] = objData && objData.map((todo: {}[]) => {
-                    return Object.keys(todo).map((key) => {
-                        const id: number = +key
-                        return todo[id]
-                    })
-                });
-
-                const arrayOfObjects = [].concat.apply([], aryOfData);
-
-                const arrayOfArrys = arrayOfObjects.map((todo) => {
-                    return Object.keys(todo).map(key => {
-                        return todo[key];
-                    })
-                });
-
-                const arrayOfTodo: TodoType[] = [].concat.apply([], arrayOfArrys);
-                dispatch(replaceTodos(arrayOfTodo ? arrayOfTodo : []))
-
-                categories ? dispatch(replaceCategory(categories)) : dispatch(replaceCategory(['todos'])) ;
-                dispatch(isLoading(false));
-            } else if (!res.ok) {
-                dispatch(isLoading(false));
-            }
-        }
-
-        fetchData();
+    return () => {
+        const db = getDatabase();
+        console.log(todo);
+        set(ref(db, 'todos/' + todo.id), {
+            todo: todo.todo,
+            isComplete: todo.isComplete,
+            category: todo.category,
+            id: todo.id
+        });
     }
 }
 
+export const fetchTodoData = (replaceTodos: (parameter: TodoType[]) => void, isLoading: (parameter: boolean) => void, replaceCategory: (parameter: string[]) => void) => {
+    return (dispatch: (parameter: void) => void) => {
+        const dbRef = ref(getDatabase());
+        get(child(dbRef, `todos/`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                if(Array.isArray(data)) {
+                    dispatch(replaceTodos(data));
+                    console.log(data);
+                } else {
+                    console.log(data);
+                    const arrayOfTodos = Object.keys(data).map(key => {
+                        return data[key];
+                    });
+                    dispatch(replaceTodos(arrayOfTodos));
+                }
+            
+            } else {
+                console.log("No data available");
+                dispatch(replaceTodos([]));
+            }
+            dispatch(isLoading(false));
+        }).catch((error) => {
+            console.error(error);
+            dispatch(isLoading(false));
+        });
+
+        get(child(dbRef, `categories/`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                console.log(data);
+                dispatch(replaceCategory(['todos', ...data]));
+            } else {
+                console.log("No data available");
+                dispatch(replaceCategory(['todos']));
+
+            }
+        }).catch((error) => {
+            // error === 'Client is offline' ? console.log('it works error !!') : console.log(error.Error)
+            console.log(error);
+            window.location.reload();
+        });
+    }
+}
 
 export const updateTodoData = (todo: TodoType) => {
-    const category = todo.category;
     const id = todo.id;
+    console.log(id);
 
     return async () => {
-        fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${category}/${id}.json`, {
-            method: 'PUT',
-            body: JSON.stringify({ 'updateTodo': todo }), /// updating todo (updating isComplete property)
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        const db = getDatabase();
+        update(ref(db, 'todos/' + todo.id), {
+            todo: todo.todo,
+            id: todo.id,
+            category: todo.category,
+            isComplete: todo.isComplete
         })
+            .then(() => {
+                console.log('Data saved successfully!');
+            })
+            .catch((error) => {
+                console.log('The write failed...');
+            });
     }
 }
 
 export const deleteTodo = (id: number, category: string) => {
     return async () => {
-        fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${category}/${id}.json`, {
-            method: 'Delete',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        const db = getDatabase();
+        remove(ref(db, 'todos/' + id));
     }
 };
 
-export const sendCategory = (title: string) => {
+export const sendCategory = (title: string, id: number) => {
     return async () => {
-        const id = 0;
-        const todo = {
-            id,
-            todo: 'What\'s your plan for today!',
-            isComplete: false,
-            category: 'none'
-        }
-        fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${title}/${id}.json`, {
-            method: 'POST',
-            body: JSON.stringify(todo),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        const db = getDatabase();
+        set(ref(db, 'categories/' + id), title);
     }
 };
 
-export const deleteCategory = (category: string) => {
+export const deleteCategory = (category: string, todos: TodoType[]) => {
     return () => {
-        fetch(`https://nextjs-redux-ts-todo-default-rtdb.firebaseio.com/${category}.json`, {
-            method: 'Delete',
-            headers: {
-                'Content-Type': 'application/json'
+        const db = getDatabase();
+        remove(ref(db, 'categories/' + category));
+        todos.map(todo => {
+            if(todo.category === category) {
+                remove(ref(db, 'todos/' + todo.id))
             }
         })
     }
