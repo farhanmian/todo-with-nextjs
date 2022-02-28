@@ -7,14 +7,12 @@
   transform: translateX(-50%);
 }
 
-
-
 .nav {
   min-height: 10%;
   max-height: 10%;
   width: 100%;
-  background-color: #21212B;
-  box-shadow: 0 2px 3px rgba(0,0,0,.4);
+  background-color: #21212b;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
   position: relative;
   text-align: start;
   display: flex;
@@ -24,33 +22,32 @@
 
 .navMenuIcon {
   cursor: pointer;
-  transition: all .3s;
+  transition: all 0.3s;
   backface-visibility: hidden;
 }
 .navMenuIcon:hover {
   transform: scale(1.02);
 }
 .navMenuIcon:active {
-  transform: scale(.95);
+  transform: scale(0.95);
 }
 .heading {
   text-decoration: underline;
 }
 .heading span {
-  font-family: 'Zen Kurenaido', sans-serif;
+  font-family: "Zen Kurenaido", sans-serif;
 }
-
 
 .drawer {
   width: 0;
   height: 90%;
-  background-color: #21212B;
+  background-color: #21212b;
   position: relative;
-  box-shadow: 0 2px 3px rgba(0,0,0,.4);
-  transition: all .3s ease-in;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease-in;
   overflow: hidden;
   transform: translateX(-120%);
-  animation: slideIn .4s ease-out forwards;
+  animation: slideIn 0.4s ease-out forwards;
 }
 
 .drawerActive {
@@ -77,8 +74,8 @@
   height: 90px;
   width: 100%;
   transform: translateX(-120%);
-  animation: slideIn .4s ease-out forwards;
-  transition: all .4s;
+  animation: slideIn 0.4s ease-out forwards;
+  transition: all 0.4s;
 }
 
 .categoryForm {
@@ -106,22 +103,25 @@
 
 .deleteCategoryConfirmationContainer {
   height: 0%;
-  background-color: rgba(0,0,0,.4);
+  background-color: rgba(0, 0, 0, 0.4);
   position: absolute;
   top: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all .4;
-  animation: fullHeight .4s ease-out forwards;
+  transition: all 0.4;
+  animation: fullHeight 0.4s ease-out forwards;
 }
 
 .deleteCategoryConfirmationInnerContainer {
   margin-top: -5rem;
-  background-color: rgba(0,0,0,.7);
+  background-color: rgba(0, 0, 0, 0.7);
   padding: 2rem 0;
   border-radius: 3px;
+}
+.deleteCategoryName {
+  -webkit-background-clip: text;
 }
 
 @keyframes fullHeight {
@@ -132,7 +132,7 @@
 
 @keyframes slideIn {
   100% {
-    transition: all .4s;
+    transition: all 0.4s;
     transform: translateX(0);
   }
 }

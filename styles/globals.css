@@ -7,9 +7,9 @@ body {
 }
 body {
   /* background-color: #9FA3FF; */
-  background-image: linear-gradient(to top right,#CD69DA, #FDA3A4);
+  background-image: linear-gradient(to top right, #cd69da, #fda3a4);
   min-height: 100vh;
-  /* overflow: hidden */
+  overflow: hidden;
 }
 
 a {
@@ -20,7 +20,6 @@ a {
 * {
   box-sizing: border-box;
 }
-
 
 .app {
   max-width: 80vw;
@@ -33,14 +32,14 @@ a {
   text-align: center;
   position: relative;
   box-sizing: border-box;
-  transition: all .2s;
+  transition: all 0.2s;
   position: relative;
   overflow: hidden;
 }
 
 .todoNotFoundHeading {
   opacity: 0;
-  animation: 1.5s headingAnimation .6s ease-out forwards;
+  animation: 1.5s headingAnimation 0.6s ease-out forwards;
 }
 
 .todoList {
@@ -58,7 +57,7 @@ a {
 
 .todoList {
   -ms-overflow-style: auto;
-  scrollbar-color: grey transparent ;   
+  scrollbar-color: grey transparent;
 }
 
 .errorBoundary {
@@ -70,9 +69,7 @@ a {
   background-color: #21212bdd;
   color: #ccc;
   border-radius: 10px;
-
 }
-
 
 @keyframes headingAnimation {
   100% {
